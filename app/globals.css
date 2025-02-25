@@ -1,0 +1,42 @@
+/* Global Color Variables */
+/* Light Mode (Default) */
+:root {
+  --color-primary: #1e3a8a; /* Dark Blue */
+  --color-secondary: #ef4444; /* Red */
+  --color-background: #ffffff; /* White */
+  --color-text: #1e3a8a; /* Dark Blue for text */
+  --color-text-light: #e5e7eb; /* Light Gray for subheadlines */
+  --color-overlay: rgba(0, 0, 0, 0.5); /* Semi-transparent black for overlays */
+}
+
+/* Dark Mode */
+[data-theme="dark"] {
+  --color-primary: #3b82f6; /* Lighter Blue */
+  --color-secondary: #ef4444; /* Red */
+  --color-background: #1a1a1a; /* Dark Background */
+  --color-text: #e5e7eb; /* Light Text */
+  --color-text-light: #9ca3af; /* Light Gray for subheadlines */
+  --color-overlay: rgba(0, 0, 0, 0.7); /* Darker overlay */
+}
+/* Apply Colors to the Whole App */
+body {
+  background-color: var(--color-background);
+  color: var(--color-text);
+  font-family: Arial, sans-serif;
+}
+
+/* Button Styling */
+button {
+  background-color: var(--color-primary);
+  color: var(--color-secondary);
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+button:hover {
+  background-color: var(--color-secondary);
+}
+
+
