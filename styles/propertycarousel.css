@@ -1,0 +1,163 @@
+/* Carousel Styles */
+.carousel {
+    position: relative;
+    width: 100vw; /* Full viewport width */
+    margin-left: calc(-50vw + 50%); /* Center the carousel */
+    overflow: hidden;
+    border-radius: 0; /* Remove border radius for full-width */
+  }
+  
+  /* Slides Container */
+  .slides {
+    display: flex;
+    transition: transform 0.5s ease;
+  }
+  
+  /* Individual Slide */
+  .slide {
+    min-width: 100%;
+    position: relative;
+  }
+  
+  .slide-image {
+    width: 100vw;
+    height: 500px;
+    object-fit: cover;
+  }
+  
+  .slide-details {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    padding: 2rem;
+  }
+  
+  /* Glassmorphism Card */
+  .glassmorphism-card {
+    background: rgba(255, 255, 255, 0.1); /* Semi-transparent white */
+    backdrop-filter: blur(10px); /* Glassmorphism effect */
+    border-radius: 12px; /* Rounded corners */
+    border: 1px solid rgba(255, 255, 255, 0.2); /* Subtle border */
+    padding: 1.5rem;
+    max-width: 90%; /* Limit width */
+    text-align: center;
+  }
+  
+  .slide-location {
+    font-size: 1.75rem;
+    font-weight: bold;
+    margin: 0;
+    color: var(--color-background); /* White text */
+  }
+  
+  .slide-type {
+    font-size: 1.125rem;
+    margin: 0.5rem 0;
+    font-weight: 600; /* Bold text */
+  }
+  
+  .slide-amount {
+    font-size: 1.5rem;
+    margin: 0.5rem 0;
+    color: var(--color-background); /* White text */
+  }
+  
+  .old-amount {
+    text-decoration: line-through;
+    color: #9ca3af; /* Light gray for strikethrough */
+  }
+  
+  .new-amount {
+    color: var(--color-secondary); /* Red for new amount */
+    font-weight: bold;
+  }
+  
+  /* CTA Button */
+  .cta-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: var(--color-primary); /* Dark blue */
+    color: var(--color-background); /* White text */
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+  }
+  
+  .cta-button:hover {
+    background-color: var(--color-secondary); /* Red on hover */
+  }
+  
+  /* Navigation Buttons */
+  .nav-button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white */
+    color: var(--color-primary); /* Dark blue */
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
+  .nav-button:hover {
+    background-color: var(--color-primary); /* Dark blue on hover */
+    color: var(--color-background); /* White text on hover */
+  }
+  
+  .prev {
+    left: 1.5rem;
+  }
+  
+  .next {
+    right: 1.5rem;
+  }
+  
+  /* Responsive Styles */
+  @media (max-width: 768px) {
+    .slide-image {
+      height: 350px;
+    }
+  
+    .glassmorphism-card {
+      padding: 1rem;
+      max-width: 95%; /* Slightly wider on smaller screens */
+    }
+  
+    .slide-location {
+      font-size: 1.5rem;
+    }
+  
+    .slide-type {
+      font-size: 1rem;
+    }
+  
+    .slide-amount {
+      font-size: 1.25rem;
+    }
+  
+    .cta-button {
+      padding: 0.5rem 1rem;
+      font-size: 0.875rem;
+    }
+  
+    .nav-button {
+      width: 40px;
+      height: 40px;
+    }
+  }

@@ -1,0 +1,116 @@
+/* Footer Styles */
+.footer {
+    background-color: var(--color-footer-bg); /* Use footer background variable */
+    color: var(--color-footer-text); /* Use footer text variable */
+    padding: 2rem 1rem;
+    font-family: "Poppins", sans-serif; /* Use Google Font */
+  }
+  
+  .footer-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+  
+  /* Logo and Company Name */
+  .footer-logo {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .footer-logo .logo {
+    width: 120px;
+    height: auto;
+  }
+  
+  .footer-logo .company-name {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--color-footer-text); /* Use footer text variable */
+  }
+  
+  /* Footer Sections */
+  .footer-section {
+    flex: 1 1 200px; /* Flexible sizing for sections */
+  }
+  
+  .footer-heading {
+    font-size: 1.25rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    color: var(--color-footer-text); /* Use footer text variable */
+  }
+  
+  .footer-links,
+  .footer-contact {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .footer-links li,
+  .footer-contact li {
+    margin-bottom: 0.75rem;
+  }
+  
+  .footer-links a,
+  .footer-contact li {
+    color: var(--color-text-light); /* Light gray for links and text */
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+  
+  .footer-links a:hover {
+    color: var(--color-footer-hover); /* Red on hover */
+  }
+  
+  /* Social Media Links */
+  .social-media {
+    display: flex;
+    gap: 1rem;
+  }
+  
+  .social-media a {
+    color: var(--color-footer-text); /* White icons */
+    transition: color 0.3s ease;
+  }
+  
+  .social-media a:hover {
+    color: var(--color-footer-hover); /* Red on hover */
+  }
+  
+  /* Footer Bottom (Copyright) */
+  .footer-bottom {
+    text-align: center;
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--color-text-light); /* Light gray border */
+    color: var(--color-text-light); /* Light gray text */
+  }
+  
+  /* Responsive Styles */
+  @media (max-width: 768px) {
+    .footer-container {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+  
+    .footer-logo {
+      flex-direction: column;
+      align-items: center;
+    }
+  
+    .footer-section {
+      flex: 1 1 100%;
+    }
+  
+    .social-media {
+      justify-content: center;
+    }
+  }
