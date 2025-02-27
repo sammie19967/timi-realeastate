@@ -6,9 +6,10 @@ export default function CatalogPage() {
  
   return (
     <div>
-      <CatalogPageWrapper/>
-      {/* Your catalog content goes here */}
+      <CatalogPageWrapper>
+     
       <PropertyCatalog/>
+      </CatalogPageWrapper>
       <div>
       
       </div>
