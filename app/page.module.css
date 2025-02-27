@@ -1,0 +1,82 @@
+/* Layout Styles */
+.real-estate-layout {
+    display: flex;
+    gap: 2rem;
+    padding: 2rem;
+  }
+  
+  .filter-sidebar {
+    width: 25%;
+  }
+  
+  .catalog-container {
+    width: 75%;
+  }
+  
+  /* Filter Sidebar Styles */
+  .filter-sidebar-container {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+  }
+  
+  .filter-section {
+    margin-bottom: 1.5rem;
+  }
+  
+  .category-button {
+    display: block;
+    width: 100%;
+    padding: 0.5rem;
+    margin: 0.25rem 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #fff;
+    cursor: pointer;
+  }
+  
+  .category-button.active {
+    background-color: var(--color-primary);
+    color: #fff;
+  }
+  
+  /* Catalog Styles */
+  .catalog {
+    background-color: #fff;
+    padding: 1rem;
+    border-radius: 8px;
+  }
+  
+  .property-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+  }
+  
+  .property-card {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+  }
+  
+  /* Active Filters Styles */
+  .active-filters {
+    background-color: #fff;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+  }
+  
+  .active-filters button {
+    background-color: var(--color-secondary);
+    color: #fff;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .active-filters button:hover {
+    background-color: #ef4444;
+  }

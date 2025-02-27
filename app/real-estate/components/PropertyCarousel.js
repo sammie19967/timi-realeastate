@@ -1,7 +1,7 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react"; // Added useEffect
 import { ChevronLeft, ChevronRight, Eye } from "lucide-react"; // Added Eye icon for CTA
-import "../styles/propertycarousel.css";
+import "@/styles/propertycarousel.css";
 
 const Carousel = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -69,6 +69,15 @@ const Carousel = () => {
         return "#6b7280"; // Default gray
     }
   };
+
+  // Automatic slide change
+  useEffect(() => {
+    const interval = setInterval(() => {
+      nextSlide(); // Automatically go to the next slide
+    }, 5000); // Change slide every 5 seconds
+
+    return () => clearInterval(interval); // Clear interval on component unmount
+  }, [currentSlide]); // Re-run effect when currentSlide changes
 
   return (
     <div className="carousel">

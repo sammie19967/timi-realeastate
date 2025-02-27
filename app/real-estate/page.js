@@ -1,11 +1,16 @@
 
 import Head from 'next/head'
-import PropertyCarousel from '../../components/PropertyCarousel'
+import ActiveFilters from './components/ActiveFilters';
+import FilterSidebar from './components/FilterSidebar';
+import PropertyCatalog from './components/PropertyCatalog';
+
 
 const page = () => {
   return (
-    <div>
-        <PropertyCarousel/>
+    <div className='catalog-container'>
+        <ActiveFilters/>
+        <FilterSidebar/>
+        <PropertyCatalog/>
     </div>
   );
 }

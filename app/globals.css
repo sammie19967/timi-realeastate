@@ -7,7 +7,7 @@
   --color-primary: #1e3a8a; /* Dark Blue */
   --color-secondary: #ef4444; /* Red */
   --color-background: #ffffff; /* White */
-  --color-background-alt: #f0f4f8; /* Light Gray for alternate backgrounds */
+  --color-background-alt:var(--color-secondary); /* Light Gray for alternate backgrounds */
   --color-text: #1e3a8a; /* Dark Blue for text */
   --color-text-light: #6b7280; /* Light Gray for subheadlines */
   --color-overlay: rgba(0, 0, 0, 0.5); /* Semi-transparent black for overlays */
@@ -15,7 +15,7 @@
   /* Footer Variables */
   --color-footer-bg: #1e3a8a; /* Dark Blue for footer background */
   --color-footer-text: #ffffff; /* White for footer text */
-  --color-footer-hover: #ef4444; /* Red for footer hover effects */
+  --color-footer-hover: #ef4444/* Red for footer hover effects */
 }
 
 /* Dark Mode */
@@ -23,7 +23,7 @@
   --color-primary: #3b82f6; /* Lighter Blue */
   --color-secondary: #ef4444; /* Red */
   --color-background: #1a1a1a; /* Dark Background */
-  --color-background-alt: #1b050c; /* Dark Gray for alternate backgrounds */
+  --color-background-alt:(var(--color-background)); 
   --color-text: #e5e7eb; /* Light Text */
   --color-text-light: #9ca3af; /* Light Gray for subheadlines */
   --color-overlay: rgba(0, 0, 0, 0.7); /* Darker overlay */

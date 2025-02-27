@@ -1,8 +1,12 @@
 "use client";
+import { useRef } from "react"; // Added useRef for scrolling
 import Image from "next/image";
+import { ChevronLeft, ChevronRight } from "lucide-react"; // Added navigation icons
 import "@/styles/hotcardeals.css";
 
 const HotCarDeals = () => {
+  const carListRef = useRef(null); // Ref for the car list container
+
   // Sample car product data
   const cars = [
     {
@@ -43,13 +47,33 @@ const HotCarDeals = () => {
     },
   ];
 
+  // Scroll left
+  const scrollLeft = () => {
+    if (carListRef.current) {
+      carListRef.current.scrollBy({
+        left: -300, // Scroll by 300px to the left
+        behavior: "smooth", // Smooth scrolling
+      });
+    }
+  };
+
+  // Scroll right
+  const scrollRight = () => {
+    if (carListRef.current) {
+      carListRef.current.scrollBy({
+        left: 300, // Scroll by 300px to the right
+        behavior: "smooth", // Smooth scrolling
+      });
+    }
+  };
+
   return (
     <section className="hot-car-deals">
       {/* Title */}
       <h2 className="hot-car-title">Hot Car Deals</h2>
 
       {/* Car List */}
-      <div className="car-list">
+      <div className="car-list" ref={carListRef}>
         {cars.map((car) => (
           <div key={car.id} className="car-card">
             <div className="car-image-container">
@@ -67,6 +91,14 @@ const HotCarDeals = () => {
           </div>
         ))}
       </div>
+
+      {/* Navigation Buttons */}
+      <button className="hot-car-chevron left" onClick={scrollLeft}>
+        <ChevronLeft size={48} /> {/* Larger icon */}
+      </button>
+      <button className="hot-car-chevron right" onClick={scrollRight}>
+        <ChevronRight size={48} /> {/* Larger icon */}
+      </button>
     </section>
   );
 };
