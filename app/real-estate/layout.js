@@ -2,6 +2,7 @@
 
 import PropertyCarousel from "./components/PropertyCarousel"
 import { Component } from "lucide-react";
+import "./page.module.css"
 
 
 export default function RealEstateLayout({ children }) {

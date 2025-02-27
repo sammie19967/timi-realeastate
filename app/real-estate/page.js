@@ -8,9 +8,7 @@ import PropertyCatalog from './components/PropertyCatalog';
 const page = () => {
   return (
     <div className='catalog-container'>
-        <ActiveFilters/>
-        <FilterSidebar/>
-        <PropertyCatalog/>
+         <PropertyCatalog/>
     </div>
   );
 }
