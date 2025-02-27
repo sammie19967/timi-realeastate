@@ -1,16 +1,20 @@
+import FilterSidebar from "./components/FilterSidebar";
+import PropertyCatalog from "./components/PropertyCatalog";
+import CatalogPageWrapper from "./components/CatalogPageWrapper";
 
-import Head from 'next/head'
-import ActiveFilters from './components/ActiveFilters';
-import FilterSidebar from './components/FilterSidebar';
-import PropertyCatalog from './components/PropertyCatalog';
-
-
-const page = () => {
+export default function CatalogPage() {
+ 
   return (
-    <div className='catalog-container'>
-         <PropertyCatalog/>
-    </div>
+    <div>
+      <CatalogPageWrapper/>
+      {/* Your catalog content goes here */}
+      <PropertyCatalog/>
+      <div>
+      
+      </div>
+  
+        
+      </div>
+    
   );
 }
-
-export default page

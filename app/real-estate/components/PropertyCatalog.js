@@ -77,7 +77,8 @@ const PropertyCatalog = () => {
                 height={300}
                 className="property-card__image"
                 placeholder="blur"
-                blurDataURL="/placeholder.jpeg" // Add a placeholder image for blur effect
+                blurDataURL="/mansion1.jpg"
+                 // Add a placeholder image for blur effect
               />
               <div className="property-card__sale-type">
                 {property.saleType}

@@ -1,93 +1,99 @@
-"use client";
-import { useState } from "react";
+"use client"; // Required for using React hooks in App Router
 
-const FilterSidebar = () => {
-  const [filters, setFilters] = useState({
-    category: "",
-    priceRange: { min: 0, max: 1000000 },
-    sortBy: "price-asc",
-  });
+import { useState, useEffect } from "react";
+import styles from "./FilterSidebar.module.css";
 
-  const categories = ["Apartment", "Villa", "Condo", "Townhouse", "Land"];
-  const sortOptions = [
-    { value: "price-asc", label: "Price: Low to High" },
-    { value: "price-desc", label: "Price: High to Low" },
-    { value: "date-asc", label: "Date: Oldest First" },
-    { value: "date-desc", label: "Date: Newest First" },
-  ];
+export default function FilterSidebar({ onFilterChange, onReset, onClose }) {
+  // State for filters
+  const [location, setLocation] = useState("");
+  const [priceRange, setPriceRange] = useState({ min: "", max: "" });
+  const [purchaseType, setPurchaseType] = useState("");
+  const [sortOrder, setSortOrder] = useState("asc");
 
-  const handleCategoryChange = (category) => {
-    setFilters((prev) => ({ ...prev, category }));
-  };
+  // Apply filters in real-time
+  useEffect(() => {
+    const filters = {
+      location,
+      priceRange: priceRange.min || priceRange.max ? `${priceRange.min}-${priceRange.max}` : "",
+      purchaseType,
+      sortOrder,
+    };
+    onFilterChange(filters);
+  }, [location, priceRange, purchaseType, sortOrder]);
 
-  const handlePriceRangeChange = (min, max) => {
-    setFilters((prev) => ({ ...prev, priceRange: { min, max } }));
-  };
-
-  const handleSortChange = (sortBy) => {
-    setFilters((prev) => ({ ...prev, sortBy }));
+  // Reset all filters
+  const handleReset = () => {
+    setLocation("");
+    setPriceRange({ min: "", max: "" });
+    setPurchaseType("");
+    setSortOrder("asc");
+    onReset();
   };
 
   return (
-    <div className="filter-sidebar-container">
-      <h3>Filters</h3>
+    <div className={styles.modalOverlay}>
+      <div className={styles.modalContent}>
+        <button className={styles.closeButton} onClick={onClose}>
+          &times;
+        </button>
+        <h3>Filters</h3>
 
-      {/* Category Filter */}
-      <div className="filter-section">
-        <h4>Category</h4>
-        {categories.map((category) => (
-          <button
-            key={category}
-            className={`category-button ${filters.category === category ? "active" : ""}`}
-            onClick={() => handleCategoryChange(category)}
+        {/* Location Filter */}
+        <div className={styles.filterGroup}>
+          <label>Location</label>
+          <select value={location} onChange={(e) => setLocation(e.target.value)}>
+            <option value="">All</option>
+            <option value="Nairobi">Nairobi</option>
+            <option value="Mombasa">Mombasa</option>
+            <option value="Kisumu">Kisumu</option>
+          </select>
+        </div>
+
+        {/* Price Range Filter */}
+        <div className={styles.filterGroup}>
+          <label>Price Range</label>
+          <input
+            type="number"
+            placeholder="Min"
+            value={priceRange.min}
+            onChange={(e) => setPriceRange({ ...priceRange, min: e.target.value })}
+          />
+          <input
+            type="number"
+            placeholder="Max"
+            value={priceRange.max}
+            onChange={(e) => setPriceRange({ ...priceRange, max: e.target.value })}
+          />
+        </div>
+
+        {/* Purchase Type Filter */}
+        <div className={styles.filterGroup}>
+          <label>Purchase Type</label>
+          <select
+            value={purchaseType}
+            onChange={(e) => setPurchaseType(e.target.value)}
           >
-            {category}
-          </button>
-        ))}
-      </div>
+            <option value="">All</option>
+            <option value="cash">Cash Sales</option>
+            <option value="rent">Rent</option>
+            <option value="lease">Lease</option>
+          </select>
+        </div>
 
-      {/* Price Range Filter */}
-      <div className="filter-section">
-        <h4>Price Range</h4>
-        <input
-          type="range"
-          min={0}
-          max={1000000}
-          value={filters.priceRange.min}
-          onChange={(e) =>
-            handlePriceRangeChange(Number(e.target.value), filters.priceRange.max)
-          }
-        />
-        <input
-          type="range"
-          min={0}
-          max={1000000}
-          value={filters.priceRange.max}
-          onChange={(e) =>
-            handlePriceRangeChange(filters.priceRange.min, Number(e.target.value))
-          }
-        />
-        <p>
-          ${filters.priceRange.min} - ${filters.priceRange.max}
-        </p>
-      </div>
+        {/* Sort Order */}
+        <div className={styles.filterGroup}>
+          <label>Sort By</label>
+          <select value={sortOrder} onChange={(e) => setSortOrder(e.target.value)}>
+            <option value="asc">Price: Low to High</option>
+            <option value="desc">Price: High to Low</option>
+          </select>
+        </div>
 
-      {/* Sort By */}
-      <div className="filter-section">
-        <h4>Sort By</h4>
-        <select
-          value={filters.sortBy}
-          onChange={(e) => handleSortChange(e.target.value)}
-        >
-          {sortOptions.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
+        {/* Reset Button */}
+        <button className={styles.resetButton} onClick={handleReset}>
+          Reset Filters
+        </button>
       </div>
     </div>
   );
-};
-
-export default FilterSidebar;
+}
