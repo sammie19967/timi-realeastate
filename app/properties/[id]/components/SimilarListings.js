@@ -1,19 +1,46 @@
-// app/property/[id]/components/SimilarListings.js
-import styles from './styles/SimilarListings.module.css';
+// app/properties/[id]/components/PropertyImages.js
+"use client";
+import { useState } from 'react';
+import styles from './styles/PropertyImages.module.css';
+import Lightbox from 'yet-another-react-lightbox';
+import 'yet-another-react-lightbox/styles.css';
 
-export default function SimilarListings({ listings }) {
+export default function PropertyImages({ images }) {
+  const [selectedImage, setSelectedImage] = useState(images[0]);
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+
   return (
     <div className={styles.container}>
-      <h2>Similar Listings</h2>
-      <div className={styles.listings}>
-        {listings.map((listing, index) => (
-          <div key={index} className={styles.listing}>
-            <img src={listing.image} alt={listing.title} className={styles.image} />
-            <p className={styles.title}>{listing.title}</p>
-            <p className={styles.price}>{listing.price}</p>
-          </div>
+      {/* Large Image Display */}
+      <div className={styles.largeImageContainer} onClick={() => setIsLightboxOpen(true)}>
+        <img
+          src={selectedImage}
+          alt="Selected Property"
+          className={styles.largeImage}
+        />
+      </div>
+
+      {/* Thumbnails */}
+      <div className={styles.thumbnails}>
+        {images.map((image, index) => (
+          <img
+            key={index}
+            src={image}
+            alt={`Property Thumbnail ${index + 1}`}
+            className={`${styles.thumbnail} ${
+              selectedImage === image ? styles.selected : ''
+            }`}
+            onClick={() => setSelectedImage(image)}
+          />
         ))}
       </div>
+
+      {/* Lightbox */}
+      <Lightbox
+        open={isLightboxOpen}
+        close={() => setIsLightboxOpen(false)}
+        slides={images.map((image) => ({ src: image }))}
+      />
     </div>
   );
 }
