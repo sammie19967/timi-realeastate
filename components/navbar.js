@@ -25,12 +25,12 @@ const Navbar = () => {
       <div className="logo-container">
         <Image
           src="/timilogo.png"
-          alt="Timi Properties Logo"
+          alt="Kenyorc Zenia Group"
           width={120}
           height={70}
           className="logo"
         />
-        <span className="company-name">Timi Properties</span>
+        <span className="company-name">Kenyorc Zenia Group</span>
       </div>
 
       {/* Hamburger Menu */}

@@ -43,7 +43,7 @@ const Footer = () => {
           <h3 className="footer-heading">Contact Us</h3>
           <ul className="footer-contact">
             <li>254 Main Street, Nakuru, Kenya</li>
-            <li>Phone: +254 (07) 25713192</li>
+            <li>Phone: +254 (07) 25619364</li>
             <li>Email: timiproperties@gmail.com</li>
           </ul>
         </div>

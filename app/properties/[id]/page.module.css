@@ -1,0 +1,28 @@
+/* app/properties/[id]/page.module.css */
+.pageContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .topSection {
+    display: flex;
+    gap: 20px;
+  }
+  
+  .imageSection {
+    flex: 1;
+    max-width: 60%; /* Adjust based on your preference */
+  }
+  
+  .detailsSection {
+    flex: 1;
+    max-width: 40%; /* Adjust based on your preference */
+  }
+  
+  .reviewsSection {
+    width: 100%;
+  }
