@@ -24,7 +24,7 @@ export default function SimilarListings({ listings = [] }) {  // Default to an e
         ) : (
           <p className={styles.noListings}>No similar listings available.</p>
         )}
-git       </div>
+       </div>
     </div>
   );
 }
