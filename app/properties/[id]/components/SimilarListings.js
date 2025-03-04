@@ -1,46 +1,30 @@
-// app/properties/[id]/components/PropertyImages.js
-"use client";
-import { useState } from 'react';
-import styles from './styles/PropertyImages.module.css';
-import Lightbox from 'yet-another-react-lightbox';
-import 'yet-another-react-lightbox/styles.css';
-
-export default function PropertyImages({ images }) {
-  const [selectedImage, setSelectedImage] = useState(images[0]);
-  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
-
+import styles from './styles/SimilarListings.module.css';
+export default function SimilarListings({ listings = [] }) {  // Default to an empty array
   return (
     <div className={styles.container}>
-      {/* Large Image Display */}
-      <div className={styles.largeImageContainer} onClick={() => setIsLightboxOpen(true)}>
-        <img
-          src={selectedImage}
-          alt="Selected Property"
-          className={styles.largeImage}
-        />
-      </div>
-
-      {/* Thumbnails */}
-      <div className={styles.thumbnails}>
-        {images.map((image, index) => (
-          <img
-            key={index}
-            src={image}
-            alt={`Property Thumbnail ${index + 1}`}
-            className={`${styles.thumbnail} ${
-              selectedImage === image ? styles.selected : ''
-            }`}
-            onClick={() => setSelectedImage(image)}
-          />
-        ))}
-      </div>
-
-      {/* Lightbox */}
-      <Lightbox
-        open={isLightboxOpen}
-        close={() => setIsLightboxOpen(false)}
-        slides={images.map((image) => ({ src: image }))}
-      />
+      <h2 className={styles.title}>Similar Listings</h2>
+      <div className={styles.listingsGrid}>
+        {listings.length > 0 ? (
+          listings.map((listing, index) => (
+            <div key={index} className={styles.listingCard}>
+              <img
+                src={listing.image}
+                alt={listing.title}
+                className={styles.listingImage}
+              />
+              <div className={styles.listingDetails}>
+                <h3 className={styles.listingTitle}>{listing.title}</h3>
+                <p className={styles.listingPrice}>{listing.price}</p>
+                <Link href={`/properties/${listing.id}`} className={styles.viewDetailsButton}>
+                  View Details
+                </Link>
+              </div>
+            </div>
+          ))
+        ) : (
+          <p className={styles.noListings}>No similar listings available.</p>
+        )}
+git       </div>
     </div>
   );
 }

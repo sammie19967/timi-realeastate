@@ -1,30 +1,73 @@
-/* app/property/[id]/components/styles/SimilarListings.module.css */
+
 .container {
-    margin-bottom: 20px;
-  }
-  
-  .listings {
-    display: flex;
-    gap: 10px;
-    overflow-x: auto;
-  }
-  
-  .listing {
-    width: 200px;
-    text-align: center;
-  }
-  
-  .image {
-    width: 100%;
-    height: 150px;
-    object-fit: cover;
-    border-radius: 8px;
-  }
-  
-  .title {
-    font-size: 14px;
-    margin: 5px 0;
-  }
+  margin-top: 40px;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+}
+
+.title {
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.listingsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.listingCard {
+  background-color: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.listingCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.listingImage {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.listingDetails {
+  padding: 15px;
+}
+
+.listingTitle {
+  font-size: 18px;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.listingPrice {
+  font-size: 16px;
+  font-weight: bold;
+  color: #2ecc71;
+  margin-bottom: 15px;
+}
+
+.viewDetailsButton {
+  display: inline-block;
+  padding: 10px 15px;
+  background-color: #3498db;
+  color: white;
+  border-radius: 5px;
+  text-align: center;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.viewDetailsButton:hover {
+  background-color: #2980b9;
+}
   
   .price {
     font-size: 16px;

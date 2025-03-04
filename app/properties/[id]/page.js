@@ -3,6 +3,7 @@ import PropertyImages from './components/PropertyImages';
 import PropertyDetails from './components/PropertyDetails';
 import Reviews from './components/Reviews';
 import styles from './page.module.css';
+import SimilarListings from './components/SimilarListings';
 
 export default async function PropertyPage({ params }) {
   const { id } = await params;
@@ -55,6 +56,7 @@ export default async function PropertyPage({ params }) {
       <div className={styles.reviewsSection}>
         <Reviews reviews={property.reviews} />
       </div>
+      <SimilarListings />
     </div>
   );
 }
