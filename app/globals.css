@@ -61,3 +61,25 @@ button {
 button:hover {
   background-color: var(--color-secondary);
 }
+.auth-header {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 10px;
+  height: 60px;
+  background-color: #f8f8f8; /* Light grey */
+}
+
+.auth-header button {
+  margin: 0 10px;
+  padding: 8px 12px;
+  background-color: #007bff; /* Blue */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.auth-header button:hover {
+  background-color: #0056b3; /* Darker blue */
+}
