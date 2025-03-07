@@ -12,13 +12,14 @@
     "@clerk/nextjs": "^6.12.3",
     "@headlessui/react": "^2.2.0",
     "@heroicons/react": "^2.2.0",
+    "dotenv": "^16.4.7",
     "lucide-react": "^0.476.0",
-    "mysql2": "^3.12.0",
+    "mysql2": "^3.13.0",
     "next": "15.1.7",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-icons": "^5.5.0",
-    "sequelize": "^6.37.5",
+    "sequelize": "^6.37.6",
     "yet-another-react-lightbox": "^3.21.7"
   },
   "devDependencies": {
