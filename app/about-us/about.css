@@ -1,0 +1,100 @@
+/* About Container */
+.about-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    font-family: 'Inter', sans-serif;
+    line-height: 1.6;
+    color: #333; /* Dark text for readability */
+}
+
+/* Headings */
+.about-container h1,
+.about-container h2 {
+    color: #2c3e50; /* Dark blue for headings */
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+.about-container h1 {
+    font-size: 2.5rem;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.about-container h2 {
+    font-size: 2rem;
+    margin-top: 30px;
+    border-bottom: 2px solid #bb86fc; /* Accent color underline */
+    display: inline-block;
+    padding-bottom: 5px;
+}
+
+/* Paragraphs */
+.about-container p {
+    font-size: 1.1rem;
+    margin-bottom: 20px;
+    color: #555; /* Slightly lighter text for paragraphs */
+}
+
+/* Highlighted Text */
+.highlight {
+    color: #bb86fc; /* Accent color for highlights */
+    font-weight: 600;
+}
+
+/* Company Name */
+.company-name {
+    color: #2c3e50; /* Dark blue for company name */
+    font-weight: 700;
+    font-style: italic;
+}
+
+/* Emphasis Text */
+.emphasis {
+    color: #e74c3c; /* Red for emphasis */
+    font-weight: 600;
+}
+
+/* Contact Information */
+.about-container p:last-of-type {
+    margin-bottom: 0; /* Remove margin for the last paragraph */
+}
+
+.about-container p span.emphasis {
+    color: #2c3e50; /* Dark blue for contact details */
+    font-weight: 500;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .about-container {
+        padding: 20px 15px;
+    }
+
+    .about-container h1 {
+        font-size: 2rem;
+    }
+
+    .about-container h2 {
+        font-size: 1.75rem;
+    }
+
+    .about-container p {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .about-container h1 {
+        font-size: 1.75rem;
+    }
+
+    .about-container h2 {
+        font-size: 1.5rem;
+    }
+
+    .about-container p {
+        font-size: 0.95rem;
+    }
+}

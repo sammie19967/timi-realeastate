@@ -23,7 +23,7 @@ const Navbar = () => {
     <nav className="navbar">
       {/* Logo and Company Name */}
       <div className="logo-container">
-        <Image src="/timilogo.png" alt="Kenyorc Zenia Group" width={120} height={70} className="logo" />
+        <Image src="/logozenia.png" alt="Kenyorc Zenia Group" width={120} height={70} className="logo" />
         
       </div>
 
