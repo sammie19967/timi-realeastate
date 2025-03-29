@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useState } from "react";
 import { Home, Computer, Building, Car, Info, Menu, X, Sun, Moon } from "lucide-react"; 
 import DarkModeToggle from "../components/darkmodetoggle"; 
-import { SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs"; // Clerk Auth Imports
+import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs"; // Clerk Auth Imports
 import "../styles/navbar.css";
 
 const Navbar = () => {
@@ -49,7 +49,7 @@ const Navbar = () => {
         <div className="auth-buttons">
           <SignedOut>
             <SignInButton mode="modal" /> {/* Sign In Modal */}
-            <SignUpButton mode="modal" /> {/* Sign Up Modal */}
+           {/* Sign Up Modal */}
           </SignedOut>
           <SignedIn>
             <UserButton /> {/* Shows user profile when logged in */}
