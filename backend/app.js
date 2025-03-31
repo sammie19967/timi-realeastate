@@ -14,7 +14,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/users", userRoutes);
 
 // MongoDB Connection
-const mongoURI = process.env.MONGODB_URI;
+
 mongoose
   .connect(mongoURI)
   .then(() => {

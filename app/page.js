@@ -8,7 +8,7 @@ import HotCarDeals from "@/components/HotCarDeals";
 export default function Home() {
   return (
     <div className="home-container">
-    <HeroSection/>
+    
     <HotDeals/>
     <PopularLeaseDeals/>
     <HotCarDeals/>

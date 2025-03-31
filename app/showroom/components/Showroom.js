@@ -5,8 +5,8 @@ import "./showroom.css"; // Import CSS styles
 
 const categories = [
   { name: "For sale", link: "/showroom/cars", image: "/car1.jpg" },
-  { name: "For Hire", link: "/electronics", image: "/car2.jpg" },
-  { name: "Import", link: "/real-estate", image: "/car3.jpg" },
+  { name: "For Hire", link: "/showroom/hire", image: "/car2.jpg" },
+  { name: "Import", link: "/showroom/import", image: "/car3.jpg" },
 ];
 
 export default function Showroom() {
