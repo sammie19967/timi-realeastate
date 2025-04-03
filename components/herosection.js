@@ -1,7 +1,8 @@
 "use client";
 import Image from "next/image";
 import { Search } from "lucide-react"; // Optional: For search icon
-import "../styles/hero.css"
+import Typewriter from "typewriter-effect"; // Add this package for typewriter effect
+import "../styles/hero.css";
 
 const HeroSection = () => {
   return (
@@ -21,21 +22,26 @@ const HeroSection = () => {
 
       {/* Hero Content */}
       <div className="hero-content">
-        <h1 className="hero-headline">
-          Find Your Dream Home with <span>Timi Properties</span>
-        </h1>
-        <p className="hero-subheadline">
-          Explore luxury properties, modern apartments, and cozy homes tailored to your lifestyle.
-        </p>
+        <h1 className="hero-headline">Welcome to Zenia Kenyork</h1>
+        <p className="hero-subheadline">Kenya's #1 Online Marketplace</p>
 
-        {/* Call-to-Action Button */}
-        <button className="hero-cta">Explore Properties</button>
+        {/* Typewriter Effect */}
+        <div className="hero-typewriter">
+          <Typewriter
+            options={{
+              strings: ["BUY", "SELL", "CONNECT"],
+              autoStart: true,
+              loop: true,
+              delay: 75,
+            }}
+          />
+        </div>
 
-        {/* Optional: Search Bar */}
+        {/* Search Bar */}
         <div className="hero-search">
           <input
             type="text"
-            placeholder="Search by city, neighborhood, or ZIP"
+            placeholder="Search by product, service, or location"
             className="search-input"
           />
           <button className="search-button">
