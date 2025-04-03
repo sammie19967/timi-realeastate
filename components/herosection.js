@@ -1,43 +1,34 @@
 "use client";
-import Image from "next/image";
-import { Search } from "lucide-react"; // Optional: For search icon
-import Typewriter from "typewriter-effect"; // Add this package for typewriter effect
+import { Search } from "lucide-react";
+import Typewriter from "typewriter-effect";
 import "../styles/hero.css";
 
 const HeroSection = () => {
   return (
     <section className="hero-section">
-      {/* Background Image with Overlay */}
-      <div className="hero-background">
-        <Image
-          src="/hot1.jpg" // Replace with your image path
-          alt="Luxury Real Estate"
-          layout="fill"
-          objectFit="cover"
-          quality={100}
-          className="hero-image"
-        />
-        <div className="hero-overlay"></div>
-      </div>
-
-      {/* Hero Content */}
       <div className="hero-content">
-        <h1 className="hero-headline">Welcome to Zenia Kenyork</h1>
+        <h1 className="hero-headline">
+          <span className="text-primary">Zenia</span>{' '}
+          <span className="text-secondary">Kenyork</span>
+        </h1>
         <p className="hero-subheadline">Kenya's #1 Online Marketplace</p>
 
-        {/* Typewriter Effect */}
         <div className="hero-typewriter">
           <Typewriter
             options={{
-              strings: ["BUY", "SELL", "CONNECT"],
+              strings: [
+                '<span style="color: var(--color-primary)">BUY</span>',
+                '<span style="color: var(--color-secondary)">SELL</span>',
+                '<span style="color: var(--color-accent)">CONNECT</span>'
+              ],
               autoStart: true,
               loop: true,
               delay: 75,
+              cursor: '<span style="color: #FF0000; font-weight: 700">|</span>'
             }}
           />
         </div>
 
-        {/* Search Bar */}
         <div className="hero-search">
           <input
             type="text"
@@ -45,7 +36,7 @@ const HeroSection = () => {
             className="search-input"
           />
           <button className="search-button">
-            <Search size={20} />
+            <Search size={18} />
           </button>
         </div>
       </div>
