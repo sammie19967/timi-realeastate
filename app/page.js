@@ -11,8 +11,7 @@ export default function Home() {
       <HeroSection />
 
       <HotDeals />
-      <PopularLeaseDeals />
-      <HotCarDeals />
+    
     </div>
   );
 }

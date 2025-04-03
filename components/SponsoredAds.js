@@ -1,10 +1,13 @@
 "use client";
 import Image from "next/image";
-import { useRef, useState } from "react";
+import { useRef } from "react";
+import { useRouter } from "next/navigation";
 import "@/styles/hotdeals.css";
 
 const SponsoredAds = () => {
-  // Sample sponsored ads data with locations
+  const router = useRouter();
+  const adsListRef = useRef(null);
+
   const ads = [
     {
       id: 1,
@@ -50,30 +53,24 @@ const SponsoredAds = () => {
     },
   ];
 
-  const adsListRef = useRef(null);
-  const [visibleCount, setVisibleCount] = useState(3); // Default for mobile
-
   const scrollLeft = () => {
     if (adsListRef.current) {
-      adsListRef.current.scrollBy({
-        left: -300,
-        behavior: "smooth",
-      });
+      adsListRef.current.scrollBy({ left: -300, behavior: "smooth" });
     }
   };
 
   const scrollRight = () => {
     if (adsListRef.current) {
-      adsListRef.current.scrollBy({
-        left: 300,
-        behavior: "smooth",
-      });
+      adsListRef.current.scrollBy({ left: 300, behavior: "smooth" });
     }
+  };
+
+  const handleCardClick = (slug) => {
+    router.push(`/products/${slug}`);
   };
 
   return (
     <section className="sponsored-ads">
-      {/* Header with title and navigation */}
       <div className="ads-header">
         <h2 className="ads-title">Sponsored Ads</h2>
         <div className="ads-navigation">
@@ -86,10 +83,16 @@ const SponsoredAds = () => {
         </div>
       </div>
 
-      {/* Ads List */}
       <div className="ads-list" ref={adsListRef}>
         {ads.map((ad) => (
-          <div key={ad.id} className="ad-card">
+          <div 
+            key={ad.id} 
+            className="ad-card"
+            onClick={() => handleCardClick(ad.slug)}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => e.key === 'Enter' && handleCardClick(ad.slug)}
+          >
             <div className="ad-image-container">
               <Image
                 src={ad.image}
@@ -106,13 +109,12 @@ const SponsoredAds = () => {
               <h3 className="ad-title">{ad.title}</h3>
               <p className="ad-price">{ad.price}</p>
               <p className="ad-location">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                   <circle cx="12" cy="10" r="3"></circle>
                 </svg>
                 {ad.location}
               </p>
-              <button className="view-button">View Details</button>
             </div>
           </div>
         ))}

@@ -67,17 +67,39 @@
 
 /* Ad Card Styles */
 .ad-card {
+  position: relative;
   scroll-snap-align: start;
   background: var(--color-background);
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease;
+  transition: all 0.3s ease;
+  cursor: pointer;
 }
 
 .ad-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+/* Accessibility focus styles */
+.ad-card:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Remove default button styles from clickable card */
+.ad-card button {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  text-align: left;
+}
+
+/* Make sure buttons inside don't trigger the card click */
+.view-button {
+  pointer-events: none;
 }
 
 .ad-image-container {
@@ -131,6 +153,7 @@
   margin: 0 0 1rem 0;
 }
 
+/* View Button */
 .view-button {
   width: 100%;
   padding: 0.5rem;
@@ -165,7 +188,7 @@
     grid-auto-columns: calc(50% - 0.75rem);
     gap: 1rem;
   }
-  
+
   .ad-image-container {
     height: 150px;
   }
