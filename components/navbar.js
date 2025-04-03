@@ -19,12 +19,16 @@ const Navbar = () => {
     );
   };
 
-  return (
+  return /*  */(
     <nav className="navbar">
       {/* Logo and Company Name */}
       <div className="logo-container">
         <Image src="/logozenia.png" alt="Kenyorc Zenia Group" width={120} height={70} className="logo" />
-        
+      </div>
+
+      {/* Create Free Ad Button */}
+      <div className="create-ad-button">
+        <Link href="/create-ad" className="create-ad-link">Create Free Ad</Link>
       </div>
 
       {/* Hamburger Menu */}

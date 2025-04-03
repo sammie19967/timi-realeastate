@@ -85,35 +85,92 @@
       padding: 0.5rem 2rem; /* Match padding of nav items */
     }
   }
-  /* Responsive Styles */
-  @media (max-width: 768px) {
-    .hamburger {
-      display: block; /* Show hamburger menu on smaller screens */
-    }
-  
-    .nav-links {
-      position: absolute;
-      top: 100%; /* Position below the navbar */
-      left: 0;
-      right: 0;
-      background-color: #ffffff; /* White background */
-      flex-direction: column;
-      gap: 1rem;
-      padding: 1rem 0;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      transform: translateY(-100%); /* Hide by default */
-      transition: transform 0.3s ease;
-      opacity: 0; /* Hide by default */
-      visibility: hidden; /* Hide by default */
-    }
-  
-    .nav-links.open {
-      transform: translateY(0); /* Show when menu is open */
-      opacity: 1; /* Show when menu is open */
-      visibility: visible; /* Show when menu is open */
-    }
-  
-    .nav-item {
-      padding: 0.5rem 2rem;
-    }
+  /* Create Free Ad Button */
+.create-ad-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.create-ad-link {
+  background-color: #ef4444; /* Red background */
+  color: #ffffff; /* White text */
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  font-weight: bold;
+  text-decoration: none;
+  transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.create-ad-link:hover {
+  background-color: #dc2626; /* Darker red on hover */
+  transform: translateY(-3px); /* Slight lift effect */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add shadow on hover */
+}
+
+/* Add subtle pulsing animation */
+.create-ad-link:focus-visible {
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   }
+  50% {
+    transform: scale(1.05); /* Slightly enlarge */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Stronger shadow */
+  }
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .hamburger {
+    display: block; /* Show hamburger menu on smaller screens */
+  }
+  
+  .nav-links {
+    position: absolute;
+    top: 100%; /* Position below the navbar */
+    left: 0;
+    right: 0;
+    background-color: #ffffff; /* White background */
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transform: translateY(-100%); /* Hide by default */
+    transition: transform 0.3s ease;
+    opacity: 0; /* Hide by default */
+    visibility: hidden; /* Hide by default */
+  }
+  
+  .nav-links.open {
+    transform: translateY(0); /* Show when menu is open */
+    opacity: 1; /* Show when menu is open */
+    visibility: visible; /* Show when menu is open */
+  }
+  
+  .nav-item {
+    padding: 0.5rem 2rem;
+  }
+
+  .navbar {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr; /* Logo, button, hamburger */
+    align-items: center;
+  }
+
+  .logo-container {
+    justify-self: start;
+  }
+
+  .create-ad-button {
+    justify-self: center;
+  }
+
+  .hamburger {
+    justify-self: end;
+  }
+}
