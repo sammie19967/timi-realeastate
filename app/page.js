@@ -8,10 +8,11 @@ import HotCarDeals from "@/components/HotCarDeals";
 export default function Home() {
   return (
     <div className="home-container">
-    
-    <HotDeals/>
-    <PopularLeaseDeals/>
-    <HotCarDeals/>
+      <HeroSection />
+
+      <HotDeals />
+      <PopularLeaseDeals />
+      <HotCarDeals />
     </div>
   );
 }
