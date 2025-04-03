@@ -1,7 +1,7 @@
 import Image from "next/image";
 import styles from "./page.module.css";
 import HeroSection from "@/components/herosection";
-import HotDeals from "@/components/HotDeals";
+import HotDeals from "@/components/SponsoredAds";
 import PopularLeaseDeals from "@/components/PopularLeaseDeals";
 import HotCarDeals from "@/components/HotCarDeals";
 
