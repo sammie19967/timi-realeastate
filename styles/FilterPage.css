@@ -1,109 +1,105 @@
-/* Filter Page Container */
+/* Filter Page Layout */
 .filter-page {
-  display: grid;
-  grid-template-columns: minmax(250px, 300px) 1fr; /* Sidebar and Listings side by side */
-  gap: 2rem;
-  min-height: calc(100vh - 80px); /* Full height minus navbar height */
-  padding: 2rem;
-  background-color: var(--page-bg, #f5f7fa);
-  transition: all 0.3s ease;
-  position: relative; /* Ensure proper stacking context */
-}
-
-/* Sidebar */
-.filter-sidebar {
-  background-color: var(--sidebar-bg, #ffffff);
-  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-  padding: 1.5rem;
-  border-radius: 8px;
-  overflow-y: auto;
-  height: fit-content; /* Ensure it doesn't stretch unnecessarily */
-  position: relative; /* Ensure it stays in the grid layout */
-}
-
-/* Listings */
-.listings {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  background-color: var(--color-background);
-  padding: 1.5rem;
-  border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-/* Mobile Menu Toggle Button */
-.mobile-filter-toggle {
-  display: none;
-  padding: 0.75rem 1rem;
-  background: var(--color-primary, #3b82f6);
-  color: white;
-  border: none;
-  border-radius: 0.375rem;
-  margin-bottom: 1rem;
-  cursor: pointer;
-  font-weight: 600;
-}
-
-/* Responsive Layout */
-@media (max-width: 1024px) {
-  .filter-page {
-    grid-template-columns: minmax(220px, 250px) 1fr; /* Adjust sidebar width */
-    gap: 1.5rem;
-    padding: 1.5rem;
-  }
-}
-
-@media (max-width: 768px) {
-  .filter-page {
-    grid-template-columns: 1fr; /* Sidebar and listings stacked */
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 2rem;
     padding: 1rem;
+    max-width: 1400px;
+    margin: 0 auto;
     position: relative;
   }
-
+  
+  /* Filter Sidebar (desktop) */
+  .filter-page > :nth-child(2) { /* FilterSidebar */
+    position: sticky;
+    top: 1rem;
+    height: fit-content;
+    align-self: start;
+  }
+  
+  /* Listings (main content) */
+  .filter-page > :nth-child(4) { /* Listings */
+    width: 100%;
+  }
+  
+  /* Mobile Filter Toggle Button */
   .mobile-filter-toggle {
-    display: block; /* Show toggle button */
-  }
-
-  /* Sidebar as a collapsible menu */
-  .filter-page > :first-child {
+    display: none;
     position: fixed;
-    top: 0;
-    left: -100%;
-    width: 85%;
-    max-width: 320px;
-    height: 100vh;
-    z-index: 100;
-    background: var(--sidebar-bg, #ffffff);
-    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-    padding: 1.5rem;
-    transition: left 0.3s ease;
-    overflow-y: auto;
+    bottom: 1rem;
+    right: 1rem;
+    z-index: 90;
+    padding: 0.75rem 1.25rem;
+    background: var(--color-primary, #3b82f6);
+    color: white;
+    border: none;
+    border-radius: 2rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    font-weight: 500;
+    cursor: pointer;
+    align-items: center;
   }
-
-  .filter-page.sidebar-open > :first-child {
-    left: 0; /* Slide in the sidebar */
+  
+  .mobile-filter-toggle svg {
+    margin-right: 0.5rem;
   }
-
-  /* Overlay when sidebar is open */
+  
+  /* Mobile Sidebar */
   .sidebar-overlay {
+    display: none;
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
     background: rgba(0, 0, 0, 0.5);
-    z-index: 99;
-    display: none;
+    z-index: 95;
   }
-
-  .filter-page.sidebar-open .sidebar-overlay {
-    display: block;
+  
+  /* Mobile Layout */
+  @media (max-width: 768px) {
+    .filter-page {
+      grid-template-columns: 1fr;
+      padding: 0;
+    }
+  
+    /* Hide desktop sidebar */
+    .filter-page > :nth-child(2) {
+      display: none;
+    }
+  
+    /* Show mobile toggle button */
+    .mobile-filter-toggle {
+      display: flex;
+    }
+  
+    /* Mobile sidebar styles */
+    .filter-page.sidebar-open > :nth-child(2) {
+      display: block;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 85%;
+      max-width: 320px;
+      height: 100vh;
+      z-index: 100;
+      background: var(--sidebar-bg, #ffffff);
+      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+      padding: 1.5rem;
+      overflow-y: auto;
+    }
+  
+    .filter-page.sidebar-open .sidebar-overlay {
+      display: block;
+    }
+  
+    /* Adjust listings padding on mobile */
+    .filter-page > :nth-child(4) {
+      padding: 1rem;
+    }
   }
-}
-
-/* Dark Mode Support */
-[data-theme="dark"] {
-  --page-bg: #1a1a1a;
-  --sidebar-bg: #252525;
-}
+  
+  /* Dark Mode Support */
+  [data-theme="dark"] {
+    --sidebar-bg: #1f1f1f;
+  }
