@@ -1,6 +1,7 @@
+"use client";
 import { useState } from "react";
-import { locations } from "./locations"; // import location data
-import { categories } from "./categories"; // import category data
+
+import { categories, locations } from "./categories"; // import category data
 
 // Define the FilterSidebar component
 const FilterSidebar = ({ onFilterChange }) => {

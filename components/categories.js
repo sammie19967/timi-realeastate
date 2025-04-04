@@ -70,7 +70,7 @@ export const conditions = [
     "Used",
     "Refurbished"
   ];
-  export const locations = [
+export const locations = [
     {
       country: "Kenya",
       counties: [
