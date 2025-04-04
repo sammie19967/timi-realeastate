@@ -1,41 +1,52 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import "@/styles/FilterBar.css";
+import { categories, locations } from "./categories"; // Import your CSS styles
 
-import { categories, locations } from "./categories"; // import category data
-
-// Define the FilterSidebar component
 const FilterSidebar = ({ onFilterChange }) => {
-  const [selectedCategory, setSelectedCategory] = useState("");
-  const [selectedSubcategory, setSelectedSubcategory] = useState("");
-  const [selectedLocation, setSelectedLocation] = useState({ country: "", county: "", subcounty: "" });
-  const [selectedBrand, setSelectedBrand] = useState("");
+  const [filters, setFilters] = useState({
+    category: "",
+    subcategory: "",
+    location: { country: "", county: "", subcounty: "" },
+    brand: "",
+    priceRange: { min: "", max: "" }
+  });
 
-  // Handle category change
-  const handleCategoryChange = (event) => {
-    setSelectedCategory(event.target.value);
-    setSelectedSubcategory(""); // Reset subcategory when category changes
-    onFilterChange({ category: event.target.value, subcategory: "", location: selectedLocation, brand: selectedBrand });
-  };
-
-  // Handle subcategory change
-  const handleSubcategoryChange = (event) => {
-    setSelectedSubcategory(event.target.value);
-    onFilterChange({ category: selectedCategory, subcategory: event.target.value, location: selectedLocation, brand: selectedBrand });
-  };
-
-  // Handle location change
-  const handleLocationChange = (field, value) => {
-    setSelectedLocation((prev) => {
-      const newLocation = { ...prev, [field]: value };
-      onFilterChange({ category: selectedCategory, subcategory: selectedSubcategory, location: newLocation, brand: selectedBrand });
-      return newLocation;
+  // Handle all filter changes
+  const handleFilterChange = (field, value) => {
+    setFilters(prev => {
+      const newFilters = { ...prev, [field]: value };
+      onFilterChange(newFilters);
+      return newFilters;
     });
   };
 
-  // Handle brand change
-  const handleBrandChange = (event) => {
-    setSelectedBrand(event.target.value);
-    onFilterChange({ category: selectedCategory, subcategory: selectedSubcategory, location: selectedLocation, brand: event.target.value });
+  // Handle nested object changes (like location)
+  const handleNestedChange = (parent, field, value) => {
+    setFilters(prev => {
+      const newNested = { ...prev[parent], [field]: value };
+      const newFilters = { ...prev, [parent]: newNested };
+      onFilterChange(newFilters);
+      return newFilters;
+    });
+  };
+
+  // Clear all filters
+  const clearFilters = () => {
+    setFilters({
+      category: "",
+      subcategory: "",
+      location: { country: "", county: "", subcounty: "" },
+      brand: "",
+      priceRange: { min: "", max: "" }
+    });
+    onFilterChange({
+      category: "",
+      subcategory: "",
+      location: { country: "", county: "", subcounty: "" },
+      brand: "",
+      priceRange: { min: "", max: "" }
+    });
   };
 
   return (
@@ -43,9 +54,12 @@ const FilterSidebar = ({ onFilterChange }) => {
       <h2>Filter</h2>
 
       {/* Category Filter */}
-      <div className="filter-group">
+      <div className={`filter-group ${filters.category ? '' : 'active'}`}>
         <label>Category</label>
-        <select value={selectedCategory} onChange={handleCategoryChange}>
+        <select 
+          value={filters.category} 
+          onChange={(e) => handleFilterChange('category', e.target.value)}
+        >
           <option value="">Select Category</option>
           {categories.map((category) => (
             <option key={category.name} value={category.name}>
@@ -56,36 +70,46 @@ const FilterSidebar = ({ onFilterChange }) => {
       </div>
 
       {/* Subcategory Filter */}
-      {selectedCategory && (
-        <div className="filter-group">
-          <label>Subcategory</label>
-          <select value={selectedSubcategory} onChange={handleSubcategoryChange}>
-            <option value="">Select Subcategory</option>
-            {categories
-              .find((category) => category.name === selectedCategory)
-              .subcategories.map((subcategory) => (
-                <option key={subcategory} value={subcategory}>
-                  {subcategory}
-                </option>
-              ))}
-          </select>
-        </div>
-      )}
+      <div className={`filter-group ${filters.category && !filters.subcategory ? 'active' : ''}`}>
+        {filters.category && (
+          <>
+            <label>Subcategory</label>
+            <select
+              value={filters.subcategory}
+              onChange={(e) => handleFilterChange('subcategory', e.target.value)}
+            >
+              <option value="">Select Subcategory</option>
+              {categories
+                .find((c) => c.name === filters.category)
+                ?.subcategories?.map((sub) => (
+                  <option key={sub} value={sub}>{sub}</option>
+                ))}
+            </select>
+          </>
+        )}
+      </div>
 
-      {/* Location Filter */}
-      <div className="filter-group">
+      {/* Location Filters */}
+      <div className={`filter-group ${!filters.location.country ? 'active' : ''}`}>
         <label>Country</label>
-        <select onChange={(e) => handleLocationChange("country", e.target.value)}>
+        <select
+          value={filters.location.country}
+          onChange={(e) => handleNestedChange('location', 'country', e.target.value)}
+        >
           <option value="">Select Country</option>
           <option value="Kenya">Kenya</option>
         </select>
       </div>
 
-      {selectedLocation.country && (
-        <>
-          <div className="filter-group">
+      {/* County Filter */}
+      <div className={`filter-group ${filters.location.country && !filters.location.county ? 'active' : ''}`}>
+        {filters.location.country && (
+          <>
             <label>County</label>
-            <select onChange={(e) => handleLocationChange("county", e.target.value)}>
+            <select
+              value={filters.location.county}
+              onChange={(e) => handleNestedChange('location', 'county', e.target.value)}
+            >
               <option value="">Select County</option>
               {locations[0].counties.map((county) => (
                 <option key={county.name} value={county.name}>
@@ -93,40 +117,73 @@ const FilterSidebar = ({ onFilterChange }) => {
                 </option>
               ))}
             </select>
-          </div>
+          </>
+        )}
+      </div>
 
-          {selectedLocation.county && (
-            <div className="filter-group">
-              <label>Subcounty</label>
-              <select onChange={(e) => handleLocationChange("subcounty", e.target.value)}>
-                <option value="">Select Subcounty</option>
-                {locations[0].counties
-                  .find((county) => county.name === selectedLocation.county)
-                  .subcounties.map((subcounty) => (
-                    <option key={subcounty} value={subcounty}>
-                      {subcounty}
-                    </option>
-                  ))}
-              </select>
-            </div>
-          )}
-        </>
-      )}
+      {/* Subcounty Filter */}
+      <div className={`filter-group ${filters.location.county && !filters.location.subcounty ? 'active' : ''}`}>
+        {filters.location.county && (
+          <>
+            <label>Subcounty</label>
+            <select
+              value={filters.location.subcounty}
+              onChange={(e) => handleNestedChange('location', 'subcounty', e.target.value)}
+            >
+              <option value="">Select Subcounty</option>
+              {locations[0].counties
+                .find((c) => c.name === filters.location.county)
+                ?.subcounties?.map((sub) => (
+                  <option key={sub} value={sub}>{sub}</option>
+                ))}
+            </select>
+          </>
+        )}
+      </div>
 
       {/* Brand Filter */}
-      {selectedCategory === "Electronics" || selectedCategory === "Vehicles" ? (
-        <div className="filter-group">
-          <label>Brand</label>
-          <select value={selectedBrand} onChange={handleBrandChange}>
-            <option value="">Select Brand</option>
-            {/* Brands can be dynamic for Electronics or Vehicles */}
-            <option value="Samsung">Samsung</option>
-            <option value="Apple">Apple</option>
-            <option value="Toyota">Toyota</option>
-            <option value="Nissan">Nissan</option>
-          </select>
+      <div className={`filter-group ${(filters.category === "Electronics" || filters.category === "Vehicles") && !filters.brand ? 'active' : ''}`}>
+        {(filters.category === "Electronics" || filters.category === "Vehicles") && (
+          <>
+            <label>Brand</label>
+            <select
+              value={filters.brand}
+              onChange={(e) => handleFilterChange('brand', e.target.value)}
+            >
+              <option value="">Select Brand</option>
+              <option value="Samsung">Samsung</option>
+              <option value="Apple">Apple</option>
+              <option value="Toyota">Toyota</option>
+              <option value="Nissan">Nissan</option>
+            </select>
+          </>
+        )}
+      </div>
+
+      {/* Price Range Filter */}
+      <div className="filter-group">
+        <label>Price Range</label>
+        <div className="price-range">
+          <input
+            type="number"
+            placeholder="Min"
+            value={filters.priceRange.min}
+            onChange={(e) => handleNestedChange('priceRange', 'min', e.target.value)}
+          />
+          <span> to </span>
+          <input
+            type="number"
+            placeholder="Max"
+            value={filters.priceRange.max}
+            onChange={(e) => handleNestedChange('priceRange', 'max', e.target.value)}
+          />
         </div>
-      ) : null}
+      </div>
+
+      {/* Clear Filters Button */}
+      <button className="clear-filters" onClick={clearFilters}>
+        Clear All Filters
+      </button>
     </div>
   );
 };
