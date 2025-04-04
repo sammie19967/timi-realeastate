@@ -8,11 +8,8 @@ import HotCarDeals from "@/components/HotCarDeals";
 export default function Home() {
   return (
     <div>
-      
       <HeroSection />
       <HotDeals />
-     
-    
-    </div>
+     </div>
   );
 }

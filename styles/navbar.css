@@ -18,12 +18,14 @@
   display: flex;
   align-items: center;
   z-index: 1001;
+  border-radius: 10px; /* Rounded corners for the logo container */
 }
 
 .logo {
   object-fit: contain;
-  border-radius: 8px; /* Rounded corners for the logo */
+  border-radius: 10px; /* Rounded corners for the logo */
   transition: transform 0.3s ease;
+
 }
 
 .logo:hover {
