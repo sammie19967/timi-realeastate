@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import "@/styles/adForm.css"; // Import your CSS styles
+
 
 const AdForm = () => {
   const [formData, setFormData] = useState({
