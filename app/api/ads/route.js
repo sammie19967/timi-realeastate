@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import {connectDB} from '@/lib/dbConnect';
+import { connectToDatabase } from '@/lib/mongodb';
 import Ad from '@/models/Ad';
 
 export async function GET(req) {
@@ -75,11 +75,39 @@ export async function GET(req) {
 
 export async function POST(req) {
   try {
-    await connectDB();
+    await connectToDatabase();
+
     const body = await req.json();
-    const newAd = await Ad.create(body);
-    return NextResponse.json(newAd, { status: 201 });
+
+    // Validate required fields
+    const { title, description, price, status, location, category, subcategory, brand, images, advertiser, packageType } = body;
+
+    if (!title || !description || !price || !status || !location || !category || !advertiser) {
+      return new Response(JSON.stringify({ error: 'Missing required fields' }), { status: 400 });
+    }
+
+    // Create a new ad
+    const newAd = new Ad({
+      title,
+      description,
+      price,
+      status,
+      location,
+      category,
+      subcategory,
+      brand,
+      images,
+      advertiser,
+      package: packageType || 'free',
+      adStatus: 'pending', // Default status
+      views: 0, // Default views
+    });
+
+    await newAd.save();
+
+    return new Response(JSON.stringify(newAd), { status: 201 });
   } catch (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error('Error creating ad:', error.message);
+    return new Response(JSON.stringify({ error: 'Failed to create ad' }), { status: 500 });
   }
 }
