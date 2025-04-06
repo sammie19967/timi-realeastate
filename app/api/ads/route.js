@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server';
-import { connectToDatabase } from '@/lib/mongodb';
+import { connectDB } from '@/lib/dbConnect'; // Corrected import
 import Ad from '@/models/Ad';
 
 export async function GET(req) {
   try {
-    await connectDB();
+    await connectDB(); // Corrected function name
 
     const { searchParams } = new URL(req.url);
 
@@ -75,7 +75,7 @@ export async function GET(req) {
 
 export async function POST(req) {
   try {
-    await connectToDatabase();
+    await connectDB(); // Corrected function name
 
     const body = await req.json();
 
