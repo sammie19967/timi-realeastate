@@ -1,8 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "@/styles/adForm.css"; // Import your CSS styles
-
 
 const AdForm = () => {
   const [formData, setFormData] = useState({
@@ -18,6 +17,27 @@ const AdForm = () => {
     advertiser: { name: "", email: "", phone: "" },
     packageType: "free",
   });
+
+  const [categories, setCategories] = useState([]);
+  const [subcategories, setSubcategories] = useState([]);
+  const [locations, setLocations] = useState([]);
+
+  // Fetch categories and locations on component mount
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const catRes = await fetch("/api/categories");
+        const locRes = await fetch("/api/locations");
+        const cats = await catRes.json();
+        const locs = await locRes.json();
+        setCategories(cats);
+        setLocations(locs);
+      } catch (error) {
+        console.error("Error fetching categories or locations:", error);
+      }
+    };
+    fetchData();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -44,6 +64,16 @@ const AdForm = () => {
       ...prev,
       images: Array.from(e.target.files),
     }));
+  };
+
+  const handleCategoryChange = (e) => {
+    const selectedCategory = categories.find((cat) => cat.name === e.target.value);
+    setFormData((prev) => ({
+      ...prev,
+      category: selectedCategory.name,
+      subcategory: "", // Reset subcategory when category changes
+    }));
+    setSubcategories(selectedCategory.subcategories || []);
   };
 
   const handleSubmit = async (e) => {
@@ -138,41 +168,56 @@ const AdForm = () => {
           <h3>Location & Category</h3>
           <div className="form-group">
             <label htmlFor="location">Location*</label>
-            <input
-              type="text"
+            <select
               id="location"
               name="location"
-              placeholder="Enter location"
               value={formData.location}
               onChange={handleChange}
               required
-            />
+            >
+              <option>Select location</option>
+              {locations.map((loc) => (
+                <option key={loc._id} value={loc.name}>
+                  {loc.name}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div className="form-row">
             <div className="form-group">
               <label htmlFor="category">Category*</label>
-              <input
-                type="text"
+              <select
                 id="category"
                 name="category"
-                placeholder="Select category"
                 value={formData.category}
-                onChange={handleChange}
+                onChange={handleCategoryChange}
                 required
-              />
+              >
+                <option>Select category</option>
+                {categories.map((cat) => (
+                  <option key={cat._id} value={cat.name}>
+                    {cat.name}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div className="form-group">
               <label htmlFor="subcategory">Subcategory</label>
-              <input
-                type="text"
+              <select
                 id="subcategory"
                 name="subcategory"
-                placeholder="Select subcategory"
                 value={formData.subcategory}
                 onChange={handleChange}
-              />
+              >
+                <option>Select subcategory</option>
+                {subcategories.map((sub) => (
+                  <option key={sub} value={sub}>
+                    {sub}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
 
