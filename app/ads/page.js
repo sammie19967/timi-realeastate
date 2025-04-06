@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import "@/styles/adForm.css"; // Import your CSS styles
+import "@/styles/adForm.css";
+import { categories, locations, brands } from "@/constants/data";
 
 const AdForm = () => {
   const [formData, setFormData] = useState({
@@ -10,6 +11,7 @@ const AdForm = () => {
     price: "",
     status: "new",
     location: "",
+    subcounty: "",
     category: "",
     subcategory: "",
     brand: "",
@@ -18,25 +20,15 @@ const AdForm = () => {
     packageType: "free",
   });
 
-  const [categories, setCategories] = useState([]);
   const [subcategories, setSubcategories] = useState([]);
-  const [locations, setLocations] = useState([]);
+  const [counties, setCounties] = useState([]);
+  const [subcounties, setSubcounties] = useState([]);
+  const [availableBrands, setAvailableBrands] = useState([]);
 
-  // Fetch categories and locations on component mount
+  // Populate counties on component mount
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const catRes = await fetch("/api/categories");
-        const locRes = await fetch("/api/locations");
-        const cats = await catRes.json();
-        const locs = await locRes.json();
-        setCategories(cats);
-        setLocations(locs);
-      } catch (error) {
-        console.error("Error fetching categories or locations:", error);
-      }
-    };
-    fetchData();
+    const allCounties = locations.flatMap((loc) => loc.counties);
+    setCounties(allCounties);
   }, []);
 
   const handleChange = (e) => {
@@ -74,6 +66,17 @@ const AdForm = () => {
       subcategory: "", // Reset subcategory when category changes
     }));
     setSubcategories(selectedCategory.subcategories || []);
+    setAvailableBrands(brands[selectedCategory.name] || []);
+  };
+
+  const handleCountyChange = (e) => {
+    const selectedCounty = counties.find((county) => county.name === e.target.value);
+    setFormData((prev) => ({
+      ...prev,
+      location: selectedCounty.name,
+      subcounty: "", // Reset subcounty when county changes
+    }));
+    setSubcounties(selectedCounty.subcounties || []);
   };
 
   const handleSubmit = async (e) => {
@@ -167,18 +170,36 @@ const AdForm = () => {
         <div className="form-section">
           <h3>Location & Category</h3>
           <div className="form-group">
-            <label htmlFor="location">Location*</label>
+            <label htmlFor="location">County*</label>
             <select
               id="location"
               name="location"
               value={formData.location}
+              onChange={handleCountyChange}
+              required
+            >
+              <option>Select county</option>
+              {counties.map((county) => (
+                <option key={county.name} value={county.name}>
+                  {county.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="subcounty">Subcounty*</label>
+            <select
+              id="subcounty"
+              name="subcounty"
+              value={formData.subcounty}
               onChange={handleChange}
               required
             >
-              <option>Select location</option>
-              {locations.map((loc) => (
-                <option key={loc._id} value={loc.name}>
-                  {loc.name}
+              <option>Select subcounty</option>
+              {subcounties.map((sub) => (
+                <option key={sub} value={sub}>
+                  {sub}
                 </option>
               ))}
             </select>
@@ -196,7 +217,7 @@ const AdForm = () => {
               >
                 <option>Select category</option>
                 {categories.map((cat) => (
-                  <option key={cat._id} value={cat.name}>
+                  <option key={cat.name} value={cat.name}>
                     {cat.name}
                   </option>
                 ))}
@@ -223,14 +244,19 @@ const AdForm = () => {
 
           <div className="form-group">
             <label htmlFor="brand">Brand</label>
-            <input
-              type="text"
+            <select
               id="brand"
               name="brand"
-              placeholder="Enter brand name"
               value={formData.brand}
               onChange={handleChange}
-            />
+            >
+              <option>Select brand</option>
+              {availableBrands.map((brand) => (
+                <option key={brand} value={brand}>
+                  {brand}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
 
