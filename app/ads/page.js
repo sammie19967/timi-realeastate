@@ -1,390 +1,114 @@
 "use client";
-
-import { useState, useEffect } from "react";
-import "@/styles/adForm.css";
-import { categories, locations, brands } from "@/constants/data";
+import { useEffect, useState } from 'react';
+import "@/styles/adForm.css"; // Assuming you have a CSS file for styling
+import axios from 'axios';
 
 const AdForm = () => {
+  const [categories, setCategories] = useState([]);
+  const [subcategories, setSubcategories] = useState([]);
+  const [brands, setBrands] = useState([]);
   const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    price: "",
-    status: "new",
-    location: "",
-    subcounty: "",
-    category: "",
-    subcategory: "",
-    brand: "",
-    images: [], // URLs of uploaded images
-    advertiser: { name: "", email: "", phone: "" },
-    packageType: "free",
+    title: '',
+    description: '',
+    price: '',
+    category: '',
+    subcategory: '',
+    brand: '',
+    condition: 'New',
+    location: { county: '', subcounty: '' },
+    seller: '',  // Assume we’ll populate this dynamically
+    images: [],   // For storing the uploaded images
   });
 
-  const [subcategories, setSubcategories] = useState([]);
-  const [counties, setCounties] = useState([]);
-  const [subcounties, setSubcounties] = useState([]);
-  const [availableBrands, setAvailableBrands] = useState([]);
-  const [uploading, setUploading] = useState(false);
-
-  // Populate counties on component mount
   useEffect(() => {
-    const allCounties = locations.flatMap((loc) => loc.counties);
-    setCounties(allCounties);
+    // Fetch categories from the database
+    axios.get('/api/categories')
+      .then(res => setCategories(res.data))
+      .catch(err => console.error(err));
   }, []);
+
+  useEffect(() => {
+    // Fetch subcategories and brands when a category is selected
+    if (formData.category) {
+      axios.get(`/api/category/${formData.category}`)
+        .then(res => {
+          setSubcategories(res.data.subcategories);  // Assuming this is the structure of the response
+          setBrands(res.data.brands);
+        })
+        .catch(err => console.error(err));
+    }
+  }, [formData.category]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData(prevState => ({ ...prevState, [name]: value }));
   };
 
-  const handleNestedChange = (e) => {
-    const { name, value } = e.target;
-    const [parent, child] = name.split(".");
-    setFormData((prev) => ({
-      ...prev,
-      [parent]: {
-        ...prev[parent],
-        [child]: value,
-      },
-    }));
-  };
-
-  const handleCategoryChange = (e) => {
-    const selectedCategory = categories.find((cat) => cat.name === e.target.value);
-    setFormData((prev) => ({
-      ...prev,
-      category: selectedCategory.name,
-      subcategory: "", // Reset subcategory when category changes
-    }));
-    setSubcategories(selectedCategory.subcategories || []);
-    setAvailableBrands(brands[selectedCategory.name] || []);
-  };
-
-  const handleCountyChange = (e) => {
-    const selectedCounty = counties.find((county) => county.name === e.target.value);
-    setFormData((prev) => ({
-      ...prev,
-      location: selectedCounty.name,
-      subcounty: "", // Reset subcounty when county changes
-    }));
-    setSubcounties(selectedCounty.subcounties || []);
-  };
-
-  const handleFileUpload = async (e) => {
-    const files = e.target.files;
-    if (!files || files.length === 0) return;
-
-    setUploading(true);
-
-    const formData = new FormData();
-    Array.from(files).forEach((file) => {
-      formData.append("file", file); // Append each file to the FormData object
-    });
-
-    try {
-      const response = await fetch("/api/upload", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setFormData((prev) => ({
-          ...prev,
-          images: [...prev.images, ...data.urls], // Append uploaded file URLs
-        }));
-        alert("Files uploaded successfully!");
-      } else {
-        const error = await response.json();
-        alert(`Error uploading files: ${error.error}`);
-      }
-    } catch (err) {
-      console.error("Error uploading files:", err);
-    } finally {
-      setUploading(false);
-    }
+  const handleFileChange = (e) => {
+    setFormData(prevState => ({ ...prevState, images: e.target.files }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    const formDataToSubmit = new FormData();
+    // Append form data fields to FormData
+    Object.keys(formData).forEach((key) => {
+      if (key !== 'images') {
+        formDataToSubmit.append(key, formData[key]);
+      }
+    });
+    // Append images
+    for (let i = 0; i < formData.images.length; i++) {
+      formDataToSubmit.append('images', formData.images[i]);
+    }
 
     try {
-      const response = await fetch("/api/ads", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        alert("Ad created successfully!");
-        console.log(data);
-      } else {
-        const error = await response.json();
-        alert(`Error: ${error.error}`);
-      }
-    } catch (err) {
-      console.error("Error submitting form:", err);
+      await axios.post('/api/ads', formDataToSubmit, { headers: { 'Content-Type': 'multipart/form-data' } });
+      alert('Ad created successfully');
+    } catch (error) {
+      console.error('Error creating ad:', error);
+      alert('Error creating ad');
     }
   };
 
   return (
-    <div className="ad-form-container">
-      <h2>Create New Listing</h2>
-      <form onSubmit={handleSubmit} className="ad-form">
-        {/* Basic Information */}
-        <div className="form-section">
-          <h3>Basic Information</h3>
-          <div className="form-group">
-            <label htmlFor="title">Title*</label>
-            <input
-              type="text"
-              id="title"
-              name="title"
-              placeholder="Enter listing title"
-              value={formData.title}
-              onChange={handleChange}
-              required
-            />
-          </div>
+    <form onSubmit={handleSubmit}>
+      <input type="text" name="title" value={formData.title} onChange={handleChange} placeholder="Title" required />
+      <textarea name="description" value={formData.description} onChange={handleChange} placeholder="Description" />
+      <input type="number" name="price" value={formData.price} onChange={handleChange} placeholder="Price" required />
 
-          <div className="form-group">
-            <label htmlFor="description">Description*</label>
-            <textarea
-              id="description"
-              name="description"
-              placeholder="Describe your item in detail"
-              value={formData.description}
-              onChange={handleChange}
-              required
-              rows={5}
-            />
-          </div>
+      <select name="category" value={formData.category} onChange={handleChange} required>
+        <option value="">Select Category</option>
+        {categories.map(category => (
+          <option key={category._id} value={category._id}>{category.name}</option>
+        ))}
+      </select>
 
-          <div className="form-row">
-            <div className="form-group">
-              <label htmlFor="price">Price (KSh)*</label>
-              <input
-                type="number"
-                id="price"
-                name="price"
-                placeholder="Enter price"
-                value={formData.price}
-                onChange={handleChange}
-                required
-              />
-            </div>
+      <select name="subcategory" value={formData.subcategory} onChange={handleChange} required>
+        <option value="">Select Subcategory</option>
+        {subcategories.map((sub, idx) => (
+          <option key={idx} value={sub}>{sub}</option>
+        ))}
+      </select>
 
-            <div className="form-group">
-              <label htmlFor="status">Condition*</label>
-              <select
-                id="status"
-                name="status"
-                value={formData.status}
-                onChange={handleChange}
-              >
-                <option value="new">New</option>
-                <option value="used">Used</option>
-              </select>
-            </div>
-          </div>
-        </div>
+      <select name="brand" value={formData.brand} onChange={handleChange}>
+        <option value="">Select Brand</option>
+        {brands.map(brand => (
+          <option key={brand._id} value={brand._id}>{brand.name}</option>
+        ))}
+      </select>
 
-        {/* Location & Category */}
-        <div className="form-section">
-          <h3>Location & Category</h3>
-          <div className="form-group">
-            <label htmlFor="location">County*</label>
-            <select
-              id="location"
-              name="location"
-              value={formData.location}
-              onChange={handleCountyChange}
-              required
-            >
-              <option>Select county</option>
-              {counties.map((county) => (
-                <option key={county.name} value={county.name}>
-                  {county.name}
-                </option>
-              ))}
-            </select>
-          </div>
+      <select name="condition" value={formData.condition} onChange={handleChange}>
+        <option value="New">New</option>
+        <option value="Used">Used</option>
+        <option value="Refurbished">Refurbished</option>
+      </select>
 
-          <div className="form-group">
-            <label htmlFor="subcounty">Subcounty*</label>
-            <select
-              id="subcounty"
-              name="subcounty"
-              value={formData.subcounty}
-              onChange={handleChange}
-              required
-            >
-              <option>Select subcounty</option>
-              {subcounties.map((sub) => (
-                <option key={sub} value={sub}>
-                  {sub}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="form-row">
-            <div className="form-group">
-              <label htmlFor="category">Category*</label>
-              <select
-                id="category"
-                name="category"
-                value={formData.category}
-                onChange={handleCategoryChange}
-                required
-              >
-                <option>Select category</option>
-                {categories.map((cat) => (
-                  <option key={cat.name} value={cat.name}>
-                    {cat.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="subcategory">Subcategory</label>
-              <select
-                id="subcategory"
-                name="subcategory"
-                value={formData.subcategory}
-                onChange={handleChange}
-              >
-                <option>Select subcategory</option>
-                {subcategories.map((sub) => (
-                  <option key={sub} value={sub}>
-                    {sub}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="brand">Brand</label>
-            <select
-              id="brand"
-              name="brand"
-              value={formData.brand}
-              onChange={handleChange}
-            >
-              <option>Select brand</option>
-              {availableBrands.map((brand) => (
-                <option key={brand} value={brand}>
-                  {brand}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        {/* Images */}
-        <div className="form-section">
-          <h3>Images</h3>
-          <div className="form-group">
-            <label htmlFor="images">Upload Images*</label>
-            <input
-              type="file"
-              id="images"
-              name="images"
-              multiple
-              onChange={handleFileUpload}
-              accept="image/*"
-              className="file-input"
-            />
-            {uploading && <p>Uploading files...</p>}
-            <div className="file-hint">Upload up to 10 images (max 5MB each)</div>
-          </div>
-        </div>
-
-        {/* Advertiser Information */}
-        <div className="form-section">
-          <h3>Advertiser Information</h3>
-          <div className="form-row">
-            <div className="form-group">
-              <label htmlFor="advertiser.name">Your Name*</label>
-              <input
-                type="text"
-                id="advertiser.name"
-                name="advertiser.name"
-                placeholder="Enter your name"
-                value={formData.advertiser.name}
-                onChange={handleNestedChange}
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="advertiser.email">Email*</label>
-              <input
-                type="email"
-                id="advertiser.email"
-                name="advertiser.email"
-                placeholder="Enter your email"
-                value={formData.advertiser.email}
-                onChange={handleNestedChange}
-                required
-              />
-            </div>
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="advertiser.phone">Phone Number*</label>
-            <input
-              type="tel"
-              id="advertiser.phone"
-              name="advertiser.phone"
-              placeholder="Enter your phone number"
-              value={formData.advertiser.phone}
-              onChange={handleNestedChange}
-              required
-            />
-          </div>
-        </div>
-
-        {/* Package Type */}
-        <div className="form-section">
-          <h3>Package Type</h3>
-          <div className="form-group">
-            <label htmlFor="packageType">Select Package*</label>
-            <select
-              id="packageType"
-              name="packageType"
-              value={formData.packageType}
-              onChange={handleChange}
-            >
-              <option value="free">Free Listing</option>
-              <option value="premium">Premium Listing</option>
-            </select>
-            <div className="package-description">
-              {formData.packageType === "free" ? (
-                <p>Basic listing with standard visibility</p>
-              ) : (
-                <p>Featured listing with priority placement and more visibility</p>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* Submit Button */}
-        <div className="form-actions">
-          <button type="submit" className="submit-button" disabled={uploading}>
-            {uploading ? "Uploading..." : "Create Listing"}
-          </button>
-        </div>
-      </form>
-    </div>
+      <input type="file" name="images" onChange={handleFileChange} multiple required />
+      
+      <input type="submit" value="Submit Ad" />
+    </form>
   );
 };
 
