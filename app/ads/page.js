@@ -81,7 +81,7 @@ const AdForm = () => {
 
     const formData = new FormData();
     Array.from(files).forEach((file) => {
-      formData.append("file", file);
+      formData.append("file", file); // Append each file to the FormData object
     });
 
     try {
