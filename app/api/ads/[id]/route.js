@@ -1,16 +1,15 @@
 import { NextResponse } from 'next/server';
-import { connectDB } from '@/lib/dbConnect'; // Corrected import
+import { connectDB } from '@/lib/dbConnect';
 import Ad from '@/models/Ad';
-import mongoose from 'mongoose'; // Import mongoose for ObjectId validation
+import mongoose from 'mongoose';
 
 export async function GET(_, context) {
   try {
-    await connectDB(); // Ensure database connection
+    await connectDB();
 
-    const { params } = await context; // Await params
+    const { params } = context;
     const { id } = params;
 
-    // Validate id as a MongoDB ObjectId
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return NextResponse.json({ error: 'Invalid ad ID' }, { status: 400 });
     }
@@ -33,12 +32,11 @@ export async function GET(_, context) {
 
 export async function PUT(req, context) {
   try {
-    await connectDB(); // Ensure database connection
+    await connectDB();
 
-    const { params } = await context; // Await params
+    const { params } = context;
     const { id } = params;
 
-    // Validate id as a MongoDB ObjectId
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return NextResponse.json({ error: 'Invalid ad ID' }, { status: 400 });
     }
@@ -59,12 +57,11 @@ export async function PUT(req, context) {
 
 export async function DELETE(_, context) {
   try {
-    await connectDB(); // Ensure database connection
+    await connectDB();
 
-    const { params } = await context; // Await params
+    const { params } = context;
     const { id } = params;
 
-    // Validate id as a MongoDB ObjectId
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return NextResponse.json({ error: 'Invalid ad ID' }, { status: 400 });
     }

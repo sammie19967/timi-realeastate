@@ -19,6 +19,7 @@
     "db": "^6.0.3",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
+    "formidable": "^3.5.2",
     "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.476.0",
     "mongo": "^0.1.0",

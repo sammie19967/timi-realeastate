@@ -15,7 +15,7 @@ const AdForm = () => {
     category: "",
     subcategory: "",
     brand: "",
-    images: [],
+    images: [], // URLs of uploaded images
     advertiser: { name: "", email: "", phone: "" },
     packageType: "free",
   });
@@ -24,6 +24,7 @@ const AdForm = () => {
   const [counties, setCounties] = useState([]);
   const [subcounties, setSubcounties] = useState([]);
   const [availableBrands, setAvailableBrands] = useState([]);
+  const [uploading, setUploading] = useState(false);
 
   // Populate counties on component mount
   useEffect(() => {
@@ -51,13 +52,6 @@ const AdForm = () => {
     }));
   };
 
-  const handleFileChange = (e) => {
-    setFormData((prev) => ({
-      ...prev,
-      images: Array.from(e.target.files),
-    }));
-  };
-
   const handleCategoryChange = (e) => {
     const selectedCategory = categories.find((cat) => cat.name === e.target.value);
     setFormData((prev) => ({
@@ -77,6 +71,41 @@ const AdForm = () => {
       subcounty: "", // Reset subcounty when county changes
     }));
     setSubcounties(selectedCounty.subcounties || []);
+  };
+
+  const handleFileUpload = async (e) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    setUploading(true);
+
+    const formData = new FormData();
+    Array.from(files).forEach((file) => {
+      formData.append("file", file);
+    });
+
+    try {
+      const response = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setFormData((prev) => ({
+          ...prev,
+          images: [...prev.images, ...data.urls], // Append uploaded file URLs
+        }));
+        alert("Files uploaded successfully!");
+      } else {
+        const error = await response.json();
+        alert(`Error uploading files: ${error.error}`);
+      }
+    } catch (err) {
+      console.error("Error uploading files:", err);
+    } finally {
+      setUploading(false);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -270,10 +299,11 @@ const AdForm = () => {
               id="images"
               name="images"
               multiple
-              onChange={handleFileChange}
+              onChange={handleFileUpload}
               accept="image/*"
               className="file-input"
             />
+            {uploading && <p>Uploading files...</p>}
             <div className="file-hint">Upload up to 10 images (max 5MB each)</div>
           </div>
         </div>
@@ -349,8 +379,8 @@ const AdForm = () => {
 
         {/* Submit Button */}
         <div className="form-actions">
-          <button type="submit" className="submit-button">
-            Create Listing
+          <button type="submit" className="submit-button" disabled={uploading}>
+            {uploading ? "Uploading..." : "Create Listing"}
           </button>
         </div>
       </form>
