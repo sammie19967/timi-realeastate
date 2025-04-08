@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Upload, Image, Loader2 } from 'lucide-react'; // Import icons
-import '@/styles/adForm.css'; // Import your CSS styles
+
 
 const AdForm = () => {
   const [categories, setCategories] = useState([]);
