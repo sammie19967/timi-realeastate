@@ -18,7 +18,7 @@ const AdSchema = new mongoose.Schema({
   paymentMethod: String,
   adType: { type: String, enum: ['Free', 'Featured', 'Premium'], default: 'Free' },
   adDuration: String,
-  adStatus: { type: String, enum: ['Active', 'Inactive', 'Pending', 'Sold', 'Expired'], default: 'Pending' },
+  adStatus: { type: String, enum: ['Pending', 'Active', 'Expired'], default: 'Pending' },
   views: { type: Number, default: 0 },
   clicks: { type: Number, default: 0 },
   seller: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }
