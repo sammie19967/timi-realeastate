@@ -1,8 +1,7 @@
 "use client";
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Upload, Image, Loader2 } from 'lucide-react'; // Import icons
-
+import { Upload, Loader2 } from 'lucide-react';
 
 const AdForm = () => {
   const [categories, setCategories] = useState([]);
@@ -23,6 +22,7 @@ const AdForm = () => {
     images: [],
   });
 
+  // Fetch all categories on component mount
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -35,16 +35,29 @@ const AdForm = () => {
     fetchCategories();
   }, []);
 
+  // Fetch subcategories and brands when category changes
   useEffect(() => {
     const fetchSubcategoriesAndBrands = async () => {
       if (formData.category) {
         try {
-          const res = await axios.get(`/api/category/${formData.category}`);
+          const res = await axios.get(`/api/categories?id=${formData.category}`);
           setSubcategories(res.data.subcategories || []);
           setBrands(res.data.brands || []);
+          
+          // Reset dependent fields when category changes
+          setFormData(prev => ({
+            ...prev,
+            subcategory: '',
+            brand: ''
+          }));
         } catch (err) {
           console.error('Error fetching subcategories/brands:', err);
+          setSubcategories([]);
+          setBrands([]);
         }
+      } else {
+        setSubcategories([]);
+        setBrands([]);
       }
     };
     fetchSubcategoriesAndBrands();
@@ -57,6 +70,11 @@ const AdForm = () => {
 
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
+    if (files.length > 10) {
+      alert('Maximum 10 images allowed');
+      return;
+    }
+    
     setFormData(prev => ({ ...prev, images: files }));
     
     // Create image previews
@@ -80,12 +98,20 @@ const AdForm = () => {
     
     try {
       const formDataToSubmit = new FormData();
+      
+      // Append all form data except images
       Object.entries(formData).forEach(([key, value]) => {
         if (key !== 'images' && value) {
-          formDataToSubmit.append(key, value);
+          if (key === 'location') {
+            formDataToSubmit.append('county', value.county);
+            formDataToSubmit.append('subcounty', value.subcounty || '');
+          } else {
+            formDataToSubmit.append(key, value);
+          }
         }
       });
       
+      // Append images
       formData.images.forEach(file => {
         formDataToSubmit.append('images', file);
       });
@@ -111,7 +137,7 @@ const AdForm = () => {
       setPreviewImages([]);
     } catch (error) {
       console.error('Error creating ad:', error);
-      alert('Failed to create ad. Please try again.');
+      alert(`Failed to create ad: ${error.response?.data?.message || error.message}`);
     } finally {
       setIsLoading(false);
     }
@@ -139,6 +165,7 @@ const AdForm = () => {
                 onChange={handleChange}
                 placeholder="e.g. Samsung Galaxy S21 Ultra"
                 required
+                maxLength={100}
               />
             </div>
 
@@ -152,6 +179,7 @@ const AdForm = () => {
                 onChange={handleChange}
                 placeholder="Enter price"
                 min="0"
+                step="100"
                 required
               />
             </div>
@@ -181,6 +209,7 @@ const AdForm = () => {
                 placeholder="Provide detailed description of your item"
                 rows={5}
                 required
+                maxLength={1000}
               />
             </div>
           </div>
@@ -215,9 +244,9 @@ const AdForm = () => {
                 name="subcategory"
                 value={formData.subcategory}
                 onChange={handleChange}
-                disabled={!formData.category}
+                disabled={!formData.category || subcategories.length === 0}
               >
-                <option value="">Select a subcategory</option>
+                <option value="">{subcategories.length ? "Select subcategory" : "No subcategories"}</option>
                 {subcategories.map((sub, idx) => (
                   <option key={idx} value={sub}>{sub}</option>
                 ))}
@@ -231,9 +260,9 @@ const AdForm = () => {
                 name="brand"
                 value={formData.brand}
                 onChange={handleChange}
-                disabled={!formData.category}
+                disabled={!formData.category || brands.length === 0}
               >
-                <option value="">Select a brand</option>
+                <option value="">{brands.length ? "Select brand" : "No brands"}</option>
                 {brands.map(brand => (
                   <option key={brand._id} value={brand._id}>{brand.name}</option>
                 ))}
@@ -246,12 +275,12 @@ const AdForm = () => {
         <div className="form-section">
           <h2>Images</h2>
           <div className="form-group">
-            <label htmlFor="images">Upload Photos*</label>
+            <label htmlFor="images">Upload Photos (Max 10)*</label>
             <div className="file-upload-container">
               <label htmlFor="images" className="file-upload-label">
                 <Upload size={24} />
                 <span>Click to upload or drag and drop</span>
-                <span className="file-upload-hint">JPG, PNG up to 5MB</span>
+                <span className="file-upload-hint">JPG, PNG (Max 5MB each)</span>
               </label>
               <input
                 type="file"
@@ -274,6 +303,7 @@ const AdForm = () => {
                       type="button"
                       className="remove-image-btn"
                       onClick={() => removeImage(index)}
+                      aria-label="Remove image"
                     >
                       ×
                     </button>
@@ -293,7 +323,7 @@ const AdForm = () => {
               <input
                 type="text"
                 id="county"
-                name="location.county"
+                name="county"
                 value={formData.location.county}
                 onChange={(e) => setFormData(prev => ({
                   ...prev,
@@ -309,7 +339,7 @@ const AdForm = () => {
               <input
                 type="text"
                 id="subcounty"
-                name="location.subcounty"
+                name="subcounty"
                 value={formData.location.subcounty}
                 onChange={(e) => setFormData(prev => ({
                   ...prev,
@@ -323,10 +353,14 @@ const AdForm = () => {
 
         {/* Submit Section */}
         <div className="form-actions">
-          <button type="submit" className="submit-btn" disabled={isLoading}>
+          <button 
+            type="submit" 
+            className="submit-btn" 
+            disabled={isLoading || !formData.images.length}
+          >
             {isLoading ? (
               <>
-                <Loader2 className="spinner" />
+                <Loader2 className="spinner" size={18} />
                 Processing...
               </>
             ) : (

@@ -1,5 +1,6 @@
 import { connectDB } from '@/lib/dbConnect';
 import Category from '@/models/Category';
+import { NextResponse } from 'next/server';
 
 export async function GET(req) {
   await connectDB();
@@ -12,31 +13,34 @@ export async function GET(req) {
     try {
       const category = await Category.findById(id);
       if (!category) {
-        return new Response(JSON.stringify({ error: 'Category not found' }), { status: 404 });
+        return NextResponse.json({ error: 'Category not found' }, { status: 404 });
       }
-      return new Response(JSON.stringify(category), { status: 200 });
+      return NextResponse.json(category, { status: 200 }); // Return JSON
     } catch (error) {
-      return new Response(JSON.stringify({ error: 'Invalid category ID' }), { status: 400 });
+      return NextResponse.json({ error: 'Invalid category ID' }, { status: 400 });
     }
   }
 
   // Fetch all categories if no ID is provided
   const categories = await Category.find();
-  return new Response(JSON.stringify(categories), { status: 200 });
+  return NextResponse.json(categories, { status: 200 }); // Return JSON
 }
 
 export async function POST(req) {
   await connectDB();
   const data = await req.json();
   const newCategory = await Category.create(data);
-  return new Response(JSON.stringify(newCategory), { status: 201 });
+  return NextResponse.json(newCategory, { status: 201 }); // Return JSON
 }
 
 export async function DELETE(req) {
   await connectDB();
   const { id } = await req.json();
   const deletedCategory = await Category.findByIdAndDelete(id);
-  return new Response(JSON.stringify(deletedCategory), { status: 200 });
+  if (!deletedCategory) {
+    return NextResponse.json({ error: 'Category not found for deletion' }, { status: 404 });
+  }
+  return NextResponse.json(deletedCategory, { status: 200 }); // Return JSON
 }
 
 export async function PUT(req) {
@@ -47,5 +51,8 @@ export async function PUT(req) {
     { name, subcategories },
     { new: true }
   );
-  return new Response(JSON.stringify(updatedCategory), { status: 200 });
+  if (!updatedCategory) {
+    return NextResponse.json({ error: 'Category not found for update' }, { status: 404 });
+  }
+  return NextResponse.json(updatedCategory, { status: 200 }); // Return JSON
 }
