@@ -1,6 +1,7 @@
 import { connectDB } from '@/lib/dbConnect';
 import Category from '@/models/Category';
 import { NextResponse } from 'next/server';
+import "@/styles/adForm.css"; // Import your CSS file
 
 export async function GET(req) {
   await connectDB();
