@@ -7,6 +7,8 @@ const AdForm = () => {
   const [categories, setCategories] = useState([]);
   const [subcategories, setSubcategories] = useState([]);
   const [brands, setBrands] = useState([]);
+  const [locations, setLocations] = useState([]);
+  const [subcounties, setSubcounties] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [previewImages, setPreviewImages] = useState([]);
   const [formData, setFormData] = useState({
@@ -14,25 +16,36 @@ const AdForm = () => {
     description: '',
     price: '',
     category: '',
-    subcategory: '',
+    subcategory: 'Other',
     brand: '',
     condition: 'New',
-    location: { county: '', subcounty: '' },
-    seller: '',
+    location: { 
+      country: 'Kenya',
+      county: '', 
+      subcounty: '' 
+    },
+    seller: '6507e62b9a0beafeee8a7237',
     images: [],
   });
 
-  // Fetch all categories on component mount
+  // Fetch all categories and locations on component mount
   useEffect(() => {
-    const fetchCategories = async () => {
+    const fetchInitialData = async () => {
       try {
-        const res = await axios.get('/api/categories');
-        setCategories(res.data);
+        const [categoriesRes, locationsRes] = await Promise.all([
+          axios.get('/api/categories'),
+          axios.get('/api/locations')
+        ]);
+        
+        setCategories(categoriesRes.data);
+        setLocations(locationsRes.data);
+        
+        console.log("Categories loaded:", categoriesRes.data);
       } catch (err) {
-        console.error('Error fetching categories:', err);
+        console.error('Error fetching initial data:', err);
       }
     };
-    fetchCategories();
+    fetchInitialData();
   }, []);
 
   // Fetch subcategories and brands when category changes
@@ -40,14 +53,17 @@ const AdForm = () => {
     const fetchSubcategoriesAndBrands = async () => {
       if (formData.category) {
         try {
-          const res = await axios.get(`/api/categories?id=${formData.category}`);
-          setSubcategories(res.data.subcategories || []);
-          setBrands(res.data.brands || []);
+          const categoryRes = await axios.get(`/api/categories?id=${formData.category}`);
+          setSubcategories(categoryRes.data.subcategories || []);
           
-          // Reset dependent fields when category changes
+          const brandsRes = await axios.get(`/api/brands?category=${formData.category}`);
+          setBrands(brandsRes.data || []);
+          
+          console.log("Brands loaded:", brandsRes.data);
+          
           setFormData(prev => ({
             ...prev,
-            subcategory: '',
+            subcategory: 'Other',
             brand: ''
           }));
         } catch (err) {
@@ -63,9 +79,39 @@ const AdForm = () => {
     fetchSubcategoriesAndBrands();
   }, [formData.category]);
 
+  // Update subcounties when county changes
+  useEffect(() => {
+    if (formData.location.county && locations.length > 0) {
+      const selectedCounty = locations[0]?.counties.find(
+        county => county.name === formData.location.county
+      );
+      
+      if (selectedCounty) {
+        setSubcounties(selectedCounty.subcounties || []);
+      } else {
+        setSubcounties([]);
+      }
+      
+      setFormData(prev => ({
+        ...prev,
+        location: { ...prev.location, subcounty: '' }
+      }));
+    } else {
+      setSubcounties([]);
+    }
+  }, [formData.location.county, locations]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleLocationChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      location: { ...prev.location, [name]: value }
+    }));
   };
 
   const handleFileChange = (e) => {
@@ -77,7 +123,6 @@ const AdForm = () => {
     
     setFormData(prev => ({ ...prev, images: files }));
     
-    // Create image previews
     const previews = files.map(file => URL.createObjectURL(file));
     setPreviewImages(previews);
   };
@@ -88,6 +133,7 @@ const AdForm = () => {
     setFormData(prev => ({ ...prev, images: newImages }));
     
     const newPreviews = [...previewImages];
+    URL.revokeObjectURL(newPreviews[index]);
     newPreviews.splice(index, 1);
     setPreviewImages(newPreviews);
   };
@@ -99,39 +145,52 @@ const AdForm = () => {
     try {
       const formDataToSubmit = new FormData();
       
-      // Append all form data except images
+      const selectedCategory = categories.find(cat => cat._id === formData.category);
+      const selectedBrand = brands.find(br => br._id === formData.brand);
+      
       Object.entries(formData).forEach(([key, value]) => {
-        if (key !== 'images' && value) {
-          if (key === 'location') {
-            formDataToSubmit.append('county', value.county);
-            formDataToSubmit.append('subcounty', value.subcounty || '');
-          } else {
-            formDataToSubmit.append(key, value);
-          }
+        if (key !== 'images' && key !== 'location' && value) {
+          formDataToSubmit.append(key, value);
         }
       });
       
-      // Append images
+      if (selectedCategory) {
+        formDataToSubmit.append('categoryName', selectedCategory.name);
+      }
+      
+      if (selectedBrand) {
+        formDataToSubmit.append('brandName', selectedBrand.name);
+      }
+      
+      formDataToSubmit.append('country', formData.location.country);
+      formDataToSubmit.append('county', formData.location.county);
+      formDataToSubmit.append('subcounty', formData.location.subcounty || '');
+      
       formData.images.forEach(file => {
         formDataToSubmit.append('images', file);
       });
-
+  
+      console.log("Form data keys:", Array.from(formDataToSubmit.keys()));
+  
       await axios.post('/api/ads', formDataToSubmit, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       
       alert('Ad created successfully!');
-      // Reset form
       setFormData({
         title: '',
         description: '',
         price: '',
         category: '',
-        subcategory: '',
+        subcategory: 'Other',
         brand: '',
         condition: 'New',
-        location: { county: '', subcounty: '' },
-        seller: '',
+        location: { 
+          country: 'Kenya',
+          county: '', 
+          subcounty: '' 
+        },
+        seller: '6507e62b9a0beafeee8a7237',
         images: [],
       });
       setPreviewImages([]);
@@ -229,12 +288,17 @@ const AdForm = () => {
                 required
               >
                 <option value="">Select a category</option>
-                {categories.map(category => (
-                  <option key={category._id} value={category._id}>
-                    {category.name}
-                  </option>
-                ))}
+                {categories && categories.length > 0 ? (
+                  categories.map(category => (
+                    <option key={category._id} value={category._id}>
+                      {category.name}
+                    </option>
+                  ))
+                ) : (
+                  <option value="" disabled>Loading categories...</option>
+                )}
               </select>
+              {categories.length === 0 && <div className="helper-text">Loading categories...</div>}
             </div>
 
             <div className="form-group">
@@ -246,7 +310,7 @@ const AdForm = () => {
                 onChange={handleChange}
                 disabled={!formData.category || subcategories.length === 0}
               >
-                <option value="">{subcategories.length ? "Select subcategory" : "No subcategories"}</option>
+                <option value="Other">Other</option>
                 {subcategories.map((sub, idx) => (
                   <option key={idx} value={sub}>{sub}</option>
                 ))}
@@ -263,10 +327,17 @@ const AdForm = () => {
                 disabled={!formData.category || brands.length === 0}
               >
                 <option value="">{brands.length ? "Select brand" : "No brands"}</option>
-                {brands.map(brand => (
-                  <option key={brand._id} value={brand._id}>{brand.name}</option>
-                ))}
+                {brands && brands.length > 0 ? (
+                  brands.map(brand => (
+                    <option key={brand._id} value={brand._id}>
+                      {brand.name}
+                    </option>
+                  ))
+                ) : (
+                  formData.category && <option value="" disabled>Loading brands...</option>
+                )}
               </select>
+              {formData.category && brands.length === 0 && <div className="helper-text">Loading brands...</div>}
             </div>
           </div>
         </div>
@@ -320,33 +391,34 @@ const AdForm = () => {
           <div className="form-grid">
             <div className="form-group">
               <label htmlFor="county">County*</label>
-              <input
-                type="text"
+              <select
                 id="county"
                 name="county"
                 value={formData.location.county}
-                onChange={(e) => setFormData(prev => ({
-                  ...prev,
-                  location: { ...prev.location, county: e.target.value }
-                }))}
-                placeholder="Enter county"
+                onChange={handleLocationChange}
                 required
-              />
+              >
+                <option value="">Select county</option>
+                {locations.length > 0 && locations[0]?.counties.map((county, idx) => (
+                  <option key={idx} value={county.name}>{county.name}</option>
+                ))}
+              </select>
             </div>
 
             <div className="form-group">
               <label htmlFor="subcounty">Subcounty</label>
-              <input
-                type="text"
+              <select
                 id="subcounty"
                 name="subcounty"
                 value={formData.location.subcounty}
-                onChange={(e) => setFormData(prev => ({
-                  ...prev,
-                  location: { ...prev.location, subcounty: e.target.value }
-                }))}
-                placeholder="Enter subcounty"
-              />
+                onChange={handleLocationChange}
+                disabled={!formData.location.county || subcounties.length === 0}
+              >
+                <option value="">{subcounties.length ? "Select subcounty" : "No subcounties"}</option>
+                {subcounties.map((subcounty, idx) => (
+                  <option key={idx} value={subcounty}>{subcounty}</option>
+                ))}
+              </select>
             </div>
           </div>
         </div>
@@ -372,6 +444,240 @@ const AdForm = () => {
           </p>
         </div>
       </form>
+
+      <style jsx>{`
+        .ad-form-container {
+          font-family: 'Poppins', sans-serif;
+          max-width: 800px;
+          margin: 2rem auto;
+          padding: 2rem;
+          background-color: var(--color-background);
+          border-radius: 12px;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+          color: var(--color-text);
+        }
+
+        .ad-form-header {
+          margin-bottom: 2rem;
+          text-align: center;
+        }
+
+        .ad-form-header h1 {
+          font-size: 2rem;
+          font-weight: 600;
+          color: var(--color-primary);
+          margin-bottom: 0.5rem;
+        }
+
+        .ad-form-header p {
+          color: var(--color-text-light);
+          font-size: 1rem;
+        }
+
+        .ad-form {
+          display: flex;
+          flex-direction: column;
+          gap: 2rem;
+        }
+
+        .form-section {
+          background-color: var(--color-background);
+          padding: 1.5rem;
+          border-radius: 8px;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .form-section h2 {
+          font-size: 1.25rem;
+          font-weight: 600;
+          color: var(--color-primary);
+          margin-bottom: 1rem;
+          padding-bottom: 0.5rem;
+          border-bottom: 1px solid #e5e7eb;
+        }
+
+        .form-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+          gap: 1.5rem;
+        }
+
+        .form-group {
+          display: flex;
+          flex-direction: column;
+          gap: 0.5rem;
+        }
+
+        .form-group.full-width {
+          grid-column: 1 / -1;
+        }
+
+        label {
+          font-weight: 500;
+          color: var(--color-text);
+          font-size: 0.875rem;
+        }
+
+        input, select, textarea {
+          padding: 0.75rem;
+          border: 1px solid #e5e7eb;
+          border-radius: 6px;
+          font-family: inherit;
+          font-size: 0.875rem;
+          background-color: var(--color-background);
+          color: var(--color-text);
+          transition: border-color 0.2s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+          outline: none;
+          border-color: var(--color-primary);
+          box-shadow: 0 0 0 2px rgba(30, 58, 138, 0.1);
+        }
+
+        textarea {
+          resize: vertical;
+          min-height: 100px;
+        }
+
+        select {
+          appearance: none;
+          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%231e3a8a' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+          background-repeat: no-repeat;
+          background-position: right 0.75rem center;
+          background-size: 16px;
+        }
+
+        .helper-text {
+          font-size: 0.75rem;
+          color: var(--color-text-light);
+          margin-top: 0.25rem;
+        }
+
+        /* File Upload Styles */
+        .file-upload-container {
+          border: 2px dashed #e5e7eb;
+          border-radius: 8px;
+          padding: 2rem;
+          text-align: center;
+          transition: all 0.2s;
+          background-color: var(--color-background);
+        }
+
+        .file-upload-container:hover {
+          border-color: var(--color-primary);
+        }
+
+        .file-upload-label {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 0.5rem;
+          cursor: pointer;
+          color: var(--color-text-light);
+        }
+
+        .file-upload-label svg {
+          color: var(--color-primary);
+        }
+
+        .file-upload-hint {
+          font-size: 0.75rem;
+          color: var(--color-text-light);
+        }
+
+        .file-upload-input {
+          display: none;
+        }
+
+        /* Image Previews */
+        .image-previews {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+          gap: 1rem;
+          margin-top: 1rem;
+        }
+
+        .image-preview {
+          position: relative;
+          height: 100px;
+          border-radius: 6px;
+          overflow: hidden;
+        }
+
+        .image-preview img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+
+        .remove-image-btn {
+          position: absolute;
+          top: 0.25rem;
+          right: 0.25rem;
+          width: 1.5rem;
+          height: 1.5rem;
+          background-color: var(--color-secondary);
+          color: white;
+          border: none;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          font-size: 0.875rem;
+          padding: 0;
+          line-height: 1;
+        }
+
+        /* Form Actions */
+        .form-actions {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 1rem;
+        }
+
+        .submit-btn {
+          background-color: var(--color-primary);
+          color: white;
+          border: none;
+          border-radius: 6px;
+          padding: 0.75rem 1.5rem;
+          font-weight: 500;
+          font-size: 1rem;
+          cursor: pointer;
+          transition: background-color 0.2s;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+        }
+
+        .submit-btn:hover:not(:disabled) {
+          background-color: #1c3d8b;
+        }
+
+        .submit-btn:disabled {
+          opacity: 0.7;
+          cursor: not-allowed;
+        }
+
+        .spinner {
+          animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+
+        .form-note {
+          font-size: 0.75rem;
+          color: var(--color-text-light);
+          text-align: center;
+          max-width: 400px;
+        }
+      `}</style>
     </div>
   );
 };

@@ -75,32 +75,47 @@ export async function GET(req) {
 
 export async function POST(req) {
   try {
-    await connectDB(); // Corrected function name
-
-    const body = await req.json();
-
-    // Validate required fields
-    const { title, description, price, status, location, category, subcategory, brand, images, advertiser, packageType } = body;
-
-    if (!title || !description || !price || !status || !location || !category || !advertiser) {
-      return new Response(JSON.stringify({ error: 'Missing required fields' }), { status: 400 });
+    await connectDB();
+    
+    // For multipart/form-data, we need to use formData() instead of json()
+    const formData = await req.formData();
+    
+    // Convert formData to a regular object
+    const body = {};
+    const images = [];
+    
+    for (const [key, value] of formData.entries()) {
+      // Handle file uploads differently
+      if (key === 'images') {
+        images.push(value);
+      } else {
+        body[key] = value;
+      }
     }
 
     // Create a new ad
     const newAd = new Ad({
-      title,
-      description,
-      price,
-      status,
-      location,
-      category,
-      subcategory,
-      brand,
-      images,
-      advertiser,
-      package: packageType || 'free',
-      adStatus: 'pending', // Default status
-      views: 0, // Default views
+      title: body.title,
+      description: body.description,
+      price: parseFloat(body.price),
+      // Store both ID and name
+      category: body.category,
+      categoryName: body.categoryName, // This will be an additional field in your schema
+      subcategory: body.subcategory || 'Other',
+      brand: body.brand || undefined,
+      brandName: body.brandName, // This will be an additional field in your schema
+      condition: body.condition,
+      location: {
+        county: body.county,
+        subcounty: body.subcounty
+      },
+      adType: 'Free', // Default
+      adStatus: 'Pending', // Default
+      views: 0,
+      clicks: 0,
+      seller: body.seller,
+      // Handle image uploads here - you'll need to save them somewhere and store the paths
+      // For example: images: imageUrls
     });
 
     await newAd.save();

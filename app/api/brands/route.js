@@ -1,16 +1,16 @@
 // app/api/brands/route.js
 
-import { connectToDatabase } from '@/lib/mongodb';
+import { connectDB } from '@/lib/dbConnect';
 import Brand from '@/models/Brand';
 
 export async function GET(req) {
-  await connectToDatabase();
+  await connectDB();
   const brands = await Brand.find();
   return new Response(JSON.stringify(brands), { status: 200 });
 }
 
 export async function POST(req) {
-  await connectToDatabase();
+  await connectDB();
   const { name } = await req.json();
 
   if (!name) {
@@ -24,7 +24,7 @@ export async function POST(req) {
 }
 
 export async function PUT(req) {
-  await connectToDatabase();
+  await connectDB();
   const { id, name } = await req.json();
 
   const updatedBrand = await Brand.findByIdAndUpdate(id, { name }, { new: true });
@@ -32,7 +32,7 @@ export async function PUT(req) {
 }
 
 export async function DELETE(req) {
-  await connectToDatabase();
+  await connectDB();;
   const { id } = await req.json();
 
   const deletedBrand = await Brand.findByIdAndDelete(id);
