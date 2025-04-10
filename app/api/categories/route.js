@@ -1,3 +1,5 @@
+//api/categories
+
 import { connectDB } from '@/lib/dbConnect';
 import Category from '@/models/Category';
 import { NextResponse } from 'next/server';

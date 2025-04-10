@@ -1,3 +1,5 @@
+//app/api/ads/route.js
+
 import { NextResponse } from 'next/server';
 import { connectDB } from '@/lib/dbConnect'; // Corrected import
 import Ad from '@/models/Ad';
@@ -76,46 +78,54 @@ export async function GET(req) {
 export async function POST(req) {
   try {
     await connectDB();
-    
-    // For multipart/form-data, we need to use formData() instead of json()
+
     const formData = await req.formData();
-    
-    // Convert formData to a regular object
+
     const body = {};
     const images = [];
-    
+
     for (const [key, value] of formData.entries()) {
-      // Handle file uploads differently
       if (key === 'images') {
-        images.push(value);
+        images.push(value); // You'll handle actual upload separately
       } else {
         body[key] = value;
       }
     }
 
-    // Create a new ad
+    // Fetch category and brand name using IDs
+    let categoryName = '';
+    let brandName = '';
+
+    if (body.category) {
+      const categoryDoc = await import('@/models/Category').then(mod => mod.default.findById(body.category));
+      if (categoryDoc) categoryName = categoryDoc.name;
+    }
+
+    if (body.brand) {
+      const brandDoc = await import('@/models/Brand').then(mod => mod.default.findById(body.brand));
+      if (brandDoc) brandName = brandDoc.name;
+    }
+
     const newAd = new Ad({
       title: body.title,
       description: body.description,
       price: parseFloat(body.price),
-      // Store both ID and name
       category: body.category,
-      categoryName: body.categoryName, // This will be an additional field in your schema
+      categoryName,
       subcategory: body.subcategory || 'Other',
       brand: body.brand || undefined,
-      brandName: body.brandName, // This will be an additional field in your schema
+      brandName,
       condition: body.condition,
       location: {
         county: body.county,
         subcounty: body.subcounty
       },
-      adType: 'Free', // Default
-      adStatus: 'Pending', // Default
+      adType: 'Free',
+      adStatus: 'Pending',
       views: 0,
       clicks: 0,
       seller: body.seller,
-      // Handle image uploads here - you'll need to save them somewhere and store the paths
-      // For example: images: imageUrls
+      // images: image paths to be handled
     });
 
     await newAd.save();
@@ -126,3 +136,4 @@ export async function POST(req) {
     return new Response(JSON.stringify({ error: 'Failed to create ad' }), { status: 500 });
   }
 }
+
